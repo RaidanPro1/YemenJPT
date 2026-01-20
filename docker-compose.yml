@@ -1,112 +1,24 @@
 
-version: '3.8'
+version: '3.9'
 
-services:
-  # --- CLUSTER GATEWAY (Traefik 3.0) ---
-  traefik:
-    image: traefik:v3.0
-    container_name: yemenjpt-gateway
-    restart: always
-    command:
-      - "--api.dashboard=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
-      - "--certificatesresolvers.cloudflare.acme.dnschallenge=true"
-      - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
-      - "--certificatesresolvers.cloudflare.acme.email=${ADMIN_EMAIL}"
-    environment:
-      - CF_API_EMAIL=${CF_API_EMAIL}
-      - CF_API_KEY=${CF_API_KEY}
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./data/traefik/acme:/letsencrypt
-    networks:
-      - yemen_public
+# RaidanPro Sovereign Infrastructure - Master Entry
+# Use 'docker compose -f docker-compose.yml -f docker-compose.tools.yml up -d' to include tools.
 
-  # --- LOAD BALANCED APP NODES ---
-  app:
-    build: .
-    restart: unless-stopped
-    deploy:
-      replicas: 3
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.yemenjpt.rule=Host(`ai.raidan.pro`)"
-      - "traefik.http.routers.yemenjpt.entrypoints=websecure"
-      - "traefik.http.routers.yemenjpt.tls.certresolver=cloudflare"
-      - "traefik.http.services.yemenjpt.loadbalancer.server.port=80"
-    environment:
-      - API_KEY=${API_KEY}
-    networks:
-      - yemen_public
-      - yemen_private
-
-  # --- SOVEREIGN AI NODE (Ollama) ---
-  ollama:
-    image: ollama/ollama:latest
-    container_name: yemenjpt-ai-core
-    restart: always
-    volumes:
-      - ./data/ollama:/root/.ollama
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
-    networks:
-      - yemen_private
-
-  # --- AUTOMATION ENGINE (n8n) ---
-  n8n:
-    image: n8nio/n8n:latest
-    container_name: yemenjpt-automation
-    restart: always
-    environment:
-      - N8N_HOST=automation.raidan.pro
-      - DB_TYPE=postgresdb
-      - DB_POSTGRESDB_DATABASE=yemenjpt_sovereign
-      - DB_POSTGRESDB_HOST=db
-      - DB_POSTGRESDB_PORT=5432
-      - DB_POSTGRESDB_USER=postgres
-      - DB_POSTGRESDB_PASSWORD=${DB_PASSWORD}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.n8n.rule=Host(`automation.raidan.pro`)"
-      - "traefik.http.routers.n8n.entrypoints=websecure"
-      - "traefik.http.routers.n8n.tls.certresolver=cloudflare"
-    networks:
-      - yemen_public
-      - yemen_private
-
-  # --- PERSISTENCE (Postgres 16) ---
-  db:
-    image: postgres:16-alpine
-    container_name: yemenjpt-db
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: yemenjpt_sovereign
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
-    networks:
-      - yemen_private
+include:
+  - docker-compose.core.yml
 
 networks:
-  yemen_public:
+  raidan_public:
     driver: bridge
-  yemen_private:
+    name: raidan_public
+  raidan_private:
     internal: true
+    name: raidan_private
 
 volumes:
-  traefik_acme:
-  ollama_data:
-  postgres_data:
+  db_data:
+    name: raidan_db_data
+  redis_data:
+    name: raidan_redis_data
+  system_logs:
+    name: raidan_system_logs

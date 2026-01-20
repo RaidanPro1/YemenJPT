@@ -17,13 +17,24 @@ export enum ModuleCategory {
   AUTOMATION = 'Workflow Automation',
   OBSERVATORY = 'Violations Observatory',
   FACT_CHECK = 'Fact-Checking Unit',
-  ACADEMY = 'Media Academy'
+  ACADEMY = 'Media Academy',
+  FINANCIAL = 'Financial & Data Journalism',
+  INDICATOR_LAB = 'Indicator Lab (Early Warning)',
+  ORG_MGMT = 'Organizational Management',
+  PRODUCTIVITY = 'Productivity & Workflow',
+  CMS = 'Content Publishing (CMS)',
+  SYSTEM_MGMT = 'System & Content Management'
 }
 
-export enum CmsType {
-  WORDPRESS = 'WordPress',
-  JOOMLA = 'Joomla',
-  TYPO3 = 'Typo3'
+export enum TenantType {
+  ORGANIZATION = 'organization',
+  FREELANCER = 'freelancer'
+}
+
+export enum TenantStatus {
+  ACTIVE = 'active',
+  SUSPENDED = 'suspended',
+  PROVISIONING = 'provisioning'
 }
 
 export enum UserRole {
@@ -37,6 +48,12 @@ export enum UserRole {
   GUEST = 'Guest/Trial'
 }
 
+export enum UserStatus {
+  APPROVED = 'Approved',
+  PENDING = 'Pending',
+  REJECTED = 'Rejected'
+}
+
 export enum AiModelType {
   FALCON_3 = 'Falcon 3 (Sovereign Arabic)',
   JAIS = 'Jais (Arabic Native)',
@@ -47,44 +64,166 @@ export enum AiModelType {
   WHISPER_YEMEN = 'Munsit (Yemeni Whisper)'
 }
 
-export enum UserStatus {
-  APPROVED = 'Approved',
-  PENDING = 'Pending',
-  REJECTED = 'Rejected'
-}
-
+// Added ViolationStatus enum for the observatory module
 export enum ViolationStatus {
-  PENDING = 'Pending',
-  VERIFIED = 'Verified',
-  ARCHIVED = 'Archived'
+  PENDING = 'قيد التحقق',
+  VERIFIED = 'مؤكد',
+  ARCHIVED = 'مؤرشف'
 }
 
-// Added missing ServiceTool interface
+export interface TenantResourceQuota {
+  cpuLimit: number; // Cores
+  ramLimit: number; // GB
+  storageLimit: number; // GB
+  apiTokenLimit: number; 
+  activeUsersLimit: number;
+}
+
+export interface TenantResourceUsage {
+  cpuUsage: number;
+  ramUsage: number;
+  storageUsage: number;
+  apiTokensUsed: number;
+  activeUsers: number;
+}
+
+export interface TenantSite {
+  id: string;
+  siteUrl: string;
+  type: 'wordpress' | 'ghost' | 'portfolio';
+  status: 'active' | 'maintenance' | 'deploying' | 'error';
+  wpVersion?: string;
+  dbName?: string;
+  cloudflareStatus: 'synced' | 'pending' | 'error';
+  lastHealthCheck?: number;
+}
+
+export interface TenantPortal {
+  id: string;
+  name: string;
+  subdomain: string;
+  type: 'yemenjpt' | 'mail' | 'vault' | 'newsroom';
+  isEnabled: boolean;
+}
+
+export interface ApiVaultItem {
+  id: string;
+  serviceName: string;
+  apiKeyPreview: string; // "sk-...abcd"
+  isEnabled: boolean;
+  usageCount: number;
+}
+
+export interface Organization extends Tenant {
+  sites: TenantSite[];
+  portals: TenantPortal[];
+  apiVault: ApiVaultItem[];
+}
+
+export interface Tenant {
+  id: string;
+  name: string;
+  slug: string;
+  type: TenantType;
+  status: TenantStatus;
+  primaryDomain: string;
+  quota: TenantResourceQuota;
+  usage: TenantResourceUsage;
+  socialLinks: SocialMediaLink[];
+  createdAt: number;
+}
+
+export interface SocialMediaLink {
+  id: string;
+  platform: 'facebook' | 'twitter' | 'telegram' | 'youtube';
+  handle: string;
+  status: 'connected' | 'expired' | 'error';
+  tokenExpiresAt?: number;
+}
+
+// Updated User interface to include usage metrics and limits
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  avatar: string;
+  tenantId?: string;
+  status: UserStatus;
+  oauthConnected?: boolean;
+  usage?: {
+    cpu: number;
+    ram: number;
+    storage: number;
+    apiTokens: number;
+    cpuLimit: number;
+    ramLimit: number;
+    storageLimit: number;
+    apiLimit: number;
+  };
+}
+
 export interface ServiceTool {
   id: string;
   name: string;
   category: ModuleCategory;
   description: string;
-  status: 'online' | 'offline';
+  status: 'online' | 'offline' | 'provisioning' | 'error';
   icon: string;
   isCustomizable: boolean;
   isSovereign: boolean;
-  cpuLimit?: number;
-  ramLimit?: number;
-  storageLimit?: number;
-  cpuUsage?: number;
-  ramUsage?: number;
-  storageUsage?: number;
+  configSchema?: any;
+  currentSettings?: Record<string, any>;
 }
 
-// Added missing Message interface for AI Core
-export interface Message {
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
+export interface TrainingFeedback {
+  id: string;
+  inputData: any;
+  aiPrediction: any;
+  humanCorrection: any;
+  status: 'pending' | 'approved' | 'rejected';
+  timestamp: number;
 }
 
-// Added missing Comment interface for Collaboration
+export interface TrainingJob {
+  id: string;
+  targetModel: string;
+  dataset: string;
+  status: 'queued' | 'training' | 'validating' | 'completed' | 'failed';
+  progress: number;
+  createdAt: number;
+}
+
+export interface ModelVersion {
+  id: string;
+  version: string;
+  baseModel: AiModelType;
+  isActive: boolean;
+  accuracy: number;
+  createdAt: number;
+}
+
+// Added Course interface for the Academy module
+export interface Course {
+  id: string;
+  title: string;
+  trainer: string;
+  duration: string;
+  level: string;
+  enrolled: number;
+  image: string;
+  hasCertificate: boolean;
+}
+
+// Added Task interface for Collaboration module
+export interface Task {
+  id: string;
+  title: string;
+  status: 'todo' | 'in_progress' | 'done';
+  assignee?: string;
+}
+
+// Added Comment interface for file/task discussions
 export interface Comment {
   id: string;
   author: string;
@@ -92,123 +231,47 @@ export interface Comment {
   timestamp: number;
 }
 
-// Added missing Folder interface for Collaboration
-export interface Folder {
+// Added PublicationRecord interface for tracking content publishing
+export interface PublicationRecord {
   id: string;
-  name: string;
-  icon: string;
-}
-
-// Added missing SortOption type
-export type SortOption = 'name' | 'date' | 'size';
-
-// Added missing Organization sub-interfaces
-export interface Site {
-  id: string;
-  domain: string;
-  cms: CmsType;
-  status: 'active' | 'inactive';
-}
-
-export interface SocialAccount {
   platform: string;
-  handle: string;
-  status: 'connected' | 'disconnected';
+  url: string;
+  status: string;
 }
 
-// Added missing Organization interface for Admin
-export interface Organization {
-  id: string;
-  name: string;
-  primaryDomain: string;
-  subDomain?: string; // YemenJPT sub-portal domain
-  emailServiceEnabled: boolean;
-  emailServiceStatus: 'active' | 'inactive';
-  allowedTools: string[];
-  sites: Site[];
-  socialAccounts: SocialAccount[];
-  usage: UsageStats;
-  config: {
-    primaryModel: AiModelType;
-    cloudflareZoneId: string;
-  };
-}
-
-export interface Violation {
-  id: string;
-  title: string;
-  type: string;
-  governorate: string;
-  violator: string;
-  date: string;
-  description: string;
-  status: ViolationStatus;
-  evidenceCount: number;
-}
-
-export interface FactCheck {
-  id: string;
-  claim: string;
-  source: string;
-  result: 'true' | 'false' | 'misleading' | 'context' | 'satire';
-  analysis: string;
-  verifiedBy: string;
-  date: string;
-}
-
-export interface Course {
-  id: string;
-  title: string;
-  trainer: string;
-  startDate: string;
-  endDate: string;
-  mode: 'online' | 'offline' | 'hybrid';
-  enrolled: number;
-}
-
-export interface UsageStats {
-  cpu: number;
-  ram: number;
-  storage: number;
-  apiTokens: number;
-  cpuLimit: number;
-  ramLimit: number;
-  storageLimit: number;
-  apiLimit: number;
-}
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-  avatar: string;
-  organizationId?: string;
-  status: UserStatus;
-  usage: UsageStats;
-}
-
+// Added SharedFile interface for the Newsroom Collaboration module
 export interface SharedFile {
   id: string;
   name: string;
   type: string;
   size: string;
   owner: string;
-  folderId: string;
-  timestamp: number;
+  updatedAt: string;
   comments: number;
-  updatedAt?: string;
-  organizationId?: string;
-  sizeValue?: number; // Added missing property
-  commentsList?: Comment[]; // Added missing property
+  timestamp: number;
+  organizationId: string;
+  folderId: string;
+  commentsList?: Comment[];
+  publications?: PublicationRecord[];
 }
 
-export interface Task {
+// Added Folder interface for organizing newsroom content
+export interface Folder {
   id: string;
-  title: string;
-  status: 'todo' | 'in_progress' | 'done';
-  priority: 'low' | 'medium' | 'high';
-  assignee: string;
-  dueDate: string;
-  organizationId?: string; // Added missing property
+  name: string;
+}
+
+// Added SortOption type for list sorting
+export type SortOption = 'name' | 'date' | 'size';
+
+export interface GeminiConfig {
+  accessToken?: string;
+  specificModel?: AiModelType;
+  lowLatency?: boolean;
+  dialect?: string;
+  useColabGpu?: boolean;
+  useSearch?: boolean;
+  isCodeAssistant?: boolean;
+  useThinking?: boolean;
+  thinkingBudget?: number;
 }

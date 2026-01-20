@@ -2,11 +2,11 @@
 import React, { useState, useEffect, Suspense, lazy, createContext, useContext, useCallback } from 'react';
 import { HashRouter, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { 
-  LayoutDashboard, Search, ShieldCheck, Bot, Map as MapIcon, Archive, Users, 
-  Settings, Bell, Menu, X, AlertTriangle, Activity, Code, LogOut, 
-  ExternalLink, Lock, Zap, Loader2, MessageSquare, Terminal, Sparkles, FolderKanban, Key,
-  Twitter, Github, Facebook, Youtube, Share2, Radio, Server, Globe, MonitorCheck, Command, 
-  Languages, Eye, GraduationCap, Newspaper, Briefcase, FileSearch
+  LayoutDashboard, Search, ShieldCheck, Bot, Archive, Settings, 
+  Menu, X, Activity, Terminal, Sparkles, LogOut, 
+  ShieldAlert, Box, Cpu, Mic, Video, ImageIcon, 
+  Fingerprint, Radio, MapPin, Globe, Newspaper, GraduationCap, 
+  Briefcase, FileSearch, Loader2, Key, Lock, BookOpen, BrainCircuit
 } from 'lucide-react';
 
 import { UserRole, User, UserStatus } from './types';
@@ -15,16 +15,17 @@ import { AppLogoText, TRANSLATIONS, APP_NAME } from './constants';
 
 const LanguageContext = createContext({
   lang: 'ar',
-  t: (key: string) => '',
-  toggleLang: () => {}
+  t: (key: string) => ''
 });
 
 // Lazy load pages
+const PortalPage = lazy(() => import('./pages/PortalPage'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const OSINTPage = lazy(() => import('./pages/OSINTPage'));
 const VerificationPage = lazy(() => import('./pages/VerificationPage'));
 const AICorePage = lazy(() => import('./pages/AICorePage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
+const AdminAIRetraining = lazy(() => import('./pages/AdminAIRetraining'));
 const ObservatoryPage = lazy(() => import('./pages/ObservatoryPage'));
 const FactCheckPage = lazy(() => import('./pages/FactCheckPage'));
 const AcademyPage = lazy(() => import('./pages/AcademyPage'));
@@ -32,9 +33,10 @@ const MediaHubPage = lazy(() => import('./pages/MediaHubPage'));
 const ArchivePage = lazy(() => import('./pages/ArchivePage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
+const DocsPage = lazy(() => import('./pages/DocsPage'));
 
 const FloatingAssistant = ({ user }: { user: User }) => {
-  const { t, lang } = useContext(LanguageContext);
+  const { t } = useContext(LanguageContext);
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<any[]>([]);
@@ -53,27 +55,27 @@ const FloatingAssistant = ({ user }: { user: User }) => {
       const res = await gemini.chat(currentInput, history, { lowLatency: true, isCodeAssistant: true });
       setHistory(prev => [...prev, { role: 'assistant', content: res.text }]);
     } catch (e) {
-      setHistory(prev => [...prev, { role: 'assistant', content: "Node unreachable." }]);
+      setHistory(prev => [...prev, { role: 'assistant', content: "عقدة YemenJPT غير مستجيبة حالياً." }]);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className={`fixed bottom-8 ${lang === 'ar' ? 'left-8' : 'right-8'} z-[9999]`}>
+    <div className="fixed bottom-8 left-8 z-[9999]">
       {isOpen && (
         <div className="mb-6 w-[30rem] h-[38rem] glass-morphism border border-slate-700 rounded-[3rem] shadow-3xl flex flex-col overflow-hidden animate-in zoom-in-95 origin-bottom">
            <div className="p-6 bg-slate-900 border-b border-slate-800 flex justify-between items-center">
               <div className="flex items-center gap-4">
                  <Terminal size={20} className="text-[#e1b000]"/>
-                 <div className="text-start">
+                 <div className="text-right">
                     <span className="text-xs font-black text-white uppercase tracking-widest block">{t('code_mode')}</span>
-                    <p className="text-[9px] text-slate-500 font-bold uppercase">Root Debug Console</p>
+                    <p className="text-[9px] text-slate-500 font-bold uppercase">كونسول YemenJPT التقني</p>
                  </div>
               </div>
               <button onClick={() => setIsOpen(false)} className="text-slate-500 hover:text-white"><X size={20}/></button>
            </div>
-           <div className="flex-1 overflow-y-auto p-8 bg-slate-950/40 space-y-6" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+           <div className="flex-1 overflow-y-auto p-8 bg-slate-950/40 space-y-6" dir="rtl">
               {history.map((m, i) => (
                 <div key={i} className={`flex ${m.role === 'user' ? 'justify-start' : 'justify-end'}`}>
                    <div className={`max-w-[90%] p-5 rounded-[1.8rem] text-xs ${m.role === 'user' ? 'bg-slate-800' : 'bg-[#00338d]/20 border border-[#00338d]/30'}`}>
@@ -84,18 +86,18 @@ const FloatingAssistant = ({ user }: { user: User }) => {
               {loading && <Loader2 className="animate-spin mx-auto text-[#00338d]"/>}
            </div>
            <div className="p-6 bg-slate-900 border-t border-slate-800 flex gap-3">
-              <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Query system internals..." className="flex-1 bg-slate-950 border border-slate-800 rounded-2xl px-6 py-4 text-xs text-white" />
-              <button onClick={handleAsk} className="w-14 h-14 bg-[#00338d] rounded-2xl flex items-center justify-center"><Zap size={22}/></button>
+              <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="استعلام بروتوكول YemenJPT..." className="flex-1 bg-slate-950 border border-slate-800 rounded-2xl px-6 py-4 text-xs text-white text-right" />
+              <button onClick={handleAsk} className="w-14 h-14 bg-[#00338d] rounded-2xl flex items-center justify-center"><Sparkles size={22}/></button>
            </div>
         </div>
       )}
-      <button onClick={() => setIsOpen(!isOpen)} className="w-20 h-20 bg-[#00338d] rounded-[2.2rem] shadow-2xl flex items-center justify-center text-white"><Sparkles size={34} /></button>
+      <button onClick={() => setIsOpen(!isOpen)} className="w-20 h-20 bg-[#00338d] rounded-[2.2rem] shadow-2xl flex items-center justify-center text-white"><Terminal size={34} /></button>
     </div>
   );
 };
 
 const AppContent: React.FC = () => {
-  const [lang, setLang] = useState(localStorage.getItem('yemengpt_lang') || 'ar');
+  const [lang] = useState('ar');
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const location = useLocation();
@@ -105,12 +107,6 @@ const AppContent: React.FC = () => {
     const savedUser = localStorage.getItem('yemengpt_user');
     if (savedUser) setUser(JSON.parse(savedUser));
   }, []);
-
-  const toggleLang = useCallback(() => {
-    const newLang = lang === 'ar' ? 'en' : 'ar';
-    setLang(newLang);
-    localStorage.setItem('yemengpt_lang', newLang);
-  }, [lang]);
 
   const t = useCallback((key: string) => {
     return (TRANSLATIONS as any)[lang][key] || key;
@@ -125,8 +121,10 @@ const AppContent: React.FC = () => {
   if (!user && location.pathname !== '/login') return <Navigate to="/login" />;
 
   const navItems = [
-    { to: '/', icon: LayoutDashboard, label: 'dashboard' },
-    { to: '/observatory', icon: Eye, label: 'observatory' },
+    { to: '/', icon: Box, label: 'portal' },
+    { to: '/dashboard', icon: LayoutDashboard, label: 'dashboard' },
+    { to: '/docs', icon: BookOpen, label: 'مستندات المنظومة' },
+    { to: '/observatory', icon: ShieldAlert, label: 'observatory' },
     { to: '/factcheck', icon: FileSearch, label: 'factcheck' },
     { to: '/academy', icon: GraduationCap, label: 'academy' },
     { to: '/mediahub', icon: Newspaper, label: 'mediahub' },
@@ -138,25 +136,30 @@ const AppContent: React.FC = () => {
   ];
 
   return (
-    <LanguageContext.Provider value={{ lang, t, toggleLang }}>
-      <div className={`min-h-screen flex flex-col bg-[#020617] text-white overflow-hidden ${lang === 'ar' ? 'font-ar' : 'font-en'}`} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+    <LanguageContext.Provider value={{ lang, t }}>
+      <div className={`min-h-screen flex flex-col bg-[#020617] text-white overflow-hidden font-ar`} dir="rtl">
         <div className="flex flex-1">
           {user && (
-            <aside className={`${isSidebarOpen ? 'w-80' : 'w-24'} glass-morphism border-slate-800/60 transition-all duration-500 flex flex-col fixed inset-y-0 ${lang === 'ar' ? 'right-0 border-l' : 'left-0 border-r'} z-50 shadow-2xl`}>
+            <aside className={`${isSidebarOpen ? 'w-80' : 'w-24'} glass-morphism border-slate-800/60 border-l transition-all duration-500 flex flex-col fixed inset-y-0 right-0 z-50 shadow-2xl`}>
               <div className="p-8 flex items-center gap-4 border-b border-slate-800/60">
                 <div className="w-10 h-10 bg-[#00338d] rounded-xl flex items-center justify-center"><AppLogoText className="text-white text-xs" /></div>
                 {isSidebarOpen && <h1 className="text-xl font-black text-white tracking-tighter uppercase"><AppLogoText /></h1>}
               </div>
               <nav className="flex-1 p-6 space-y-2 overflow-y-auto custom-scrollbar">
                 {navItems.map(item => (
-                  <Link key={item.to} to={item.to} className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all ${location.pathname === item.to ? 'bg-[#00338d] text-white' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
+                  <Link key={item.to} to={item.to} className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all ${location.pathname === item.to || (item.to !== '/' && location.pathname.startsWith(item.to)) ? 'bg-[#00338d] text-white' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
                     <item.icon size={20} /> {isSidebarOpen && <span className="text-[10px] font-black uppercase tracking-widest">{t(item.label)}</span>}
                   </Link>
                 ))}
                 {user.role === UserRole.ADMIN && (
-                  <Link to="/admin" className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all ${location.pathname === '/admin' ? 'bg-[#00338d] text-white' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
-                    <Settings size={20} /> {isSidebarOpen && <span className="text-[10px] font-black uppercase tracking-widest">{t('admin')}</span>}
-                  </Link>
+                  <>
+                    <Link to="/admin" className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all ${location.pathname === '/admin' ? 'bg-[#00338d] text-white' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
+                      <Settings size={20} /> {isSidebarOpen && <span className="text-[10px] font-black uppercase tracking-widest">{t('admin')}</span>}
+                    </Link>
+                    <Link to="/admin/ai-retraining" className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all ${location.pathname === '/admin/ai-retraining' ? 'bg-[#00338d] text-white' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
+                      <BrainCircuit size={20} /> {isSidebarOpen && <span className="text-[10px] font-black uppercase tracking-widest">تحسين AI</span>}
+                    </Link>
+                  </>
                 )}
               </nav>
               <div className="p-8 border-t border-slate-800/60">
@@ -167,27 +170,32 @@ const AppContent: React.FC = () => {
             </aside>
           )}
 
-          <main className={`flex-1 transition-all duration-500 ${user ? (isSidebarOpen ? (lang === 'ar' ? 'mr-80' : 'ml-80') : (lang === 'ar' ? 'mr-24' : 'ml-24')) : ''} flex flex-col min-h-screen`}>
+          <main className={`flex-1 transition-all duration-500 ${user ? (isSidebarOpen ? 'mr-80' : 'mr-24') : ''} flex flex-col min-h-screen`}>
             {user && (
               <header className="h-24 glass-morphism border-b border-slate-800/60 px-10 flex items-center justify-between sticky top-0 z-40 bg-slate-950/80 backdrop-blur-3xl">
                 <button onClick={() => setSidebarOpen(!isSidebarOpen)} className="p-4 text-slate-400 hover:text-white"><Menu size={24} /></button>
                 <div className="flex items-center gap-6">
-                  <button onClick={toggleLang} className="px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs font-black uppercase tracking-widest">{lang === 'ar' ? 'English' : 'العربية'}</button>
-                  <img src={user.avatar} className="w-12 h-12 rounded-xl border border-[#00338d]" />
+                  <div className="text-right hidden sm:block">
+                     <p className="text-[10px] font-black text-[#e1b000] uppercase tracking-widest">المستخدم السيادي</p>
+                     <p className="text-xs font-bold text-white">{user.name}</p>
+                  </div>
+                  <img src={user.avatar} className="w-12 h-12 rounded-xl border border-[#00338d] shadow-lg" />
                 </div>
               </header>
             )}
 
             <div className="p-10 flex-1 overflow-y-auto">
-              <Suspense fallback={<Loader2 className="animate-spin mx-auto mt-20" />}>
+              <Suspense fallback={<Loader2 className="animate-spin mx-auto mt-20 text-[#00338d]" />}>
                 <Routes>
                   <Route path="/login" element={<LoginPage onLogin={(role) => {
-                    const mock: User = { id: '1', name: 'Zaid Al-Yemani', email: 'zaid@ph-ye.org', role, avatar: 'https://ui-avatars.com/api/?name=Zaid&background=00338d&color=fff', status: UserStatus.APPROVED, usage: { cpu: 0, ram: 0, storage: 0, apiTokens: 0, cpuLimit: 100, ramLimit: 32, storageLimit: 1000, apiLimit: 100000 } };
+                    const mock: User = { id: '1', name: 'زيد اليماني', email: 'root@yemenjpt.local', role, avatar: 'https://ui-avatars.com/api/?name=Zaid&background=00338d&color=fff', status: UserStatus.APPROVED, usage: { cpu: 0, ram: 0, storage: 0, apiTokens: 0, cpuLimit: 100, ramLimit: 32, storageLimit: 1000, apiLimit: 100000 } };
                     setUser(mock);
                     localStorage.setItem('yemengpt_user', JSON.stringify(mock));
                     navigate('/');
                   }} />} />
-                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/" element={<PortalPage />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/docs" element={<DocsPage />} />
                   <Route path="/observatory" element={<ObservatoryPage />} />
                   <Route path="/factcheck" element={<FactCheckPage />} />
                   <Route path="/academy" element={<AcademyPage />} />
@@ -198,6 +206,7 @@ const AppContent: React.FC = () => {
                   <Route path="/ai" element={<AICorePage />} />
                   <Route path="/services" element={<ServicesPage />} />
                   <Route path="/admin" element={<AdminPage />} />
+                  <Route path="/admin/ai-retraining" element={<AdminAIRetraining />} />
                 </Routes>
               </Suspense>
             </div>

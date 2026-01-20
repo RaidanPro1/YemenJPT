@@ -1,0 +1,36 @@
+<div class="max-w-4xl space-y-10">
+    <div class="glass p-10 rounded-[3rem] space-y-8">
+        <h2 class="text-2xl font-black text-teal-500">تخصيص الهوية (God Mode)</h2>
+        <form action="/admin/branding" method="POST" enctype="multipart/form-data" class="space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-2">
+                    <label class="text-[10px] uppercase font-black text-slate-500">اسم المنظومة</label>
+                    <input type="text" name="brand_name" value="RaidanPro" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white focus:border-teal-500 outline-none">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] uppercase font-black text-slate-500">عنوان الهيرو الرئيسي</label>
+                    <input type="text" name="hero_title" value="هندسة المرونة في عالم متغير" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white focus:border-teal-500 outline-none">
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-[10px] uppercase font-black text-slate-500">شعار الموقع (SVG/PNG)</label>
+                <div class="flex items-center gap-6 bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                    <div class="w-16 h-16 bg-slate-900 rounded-lg flex items-center justify-center">
+                        <img src="/logo.png" class="max-h-full">
+                    </div>
+                    <input type="file" name="logo" class="text-xs text-slate-500">
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-[10px] uppercase font-black text-slate-500">الكلمات المفتاحية (SEO Keywords)</label>
+                <textarea name="seo_keywords" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white min-h-[100px] outline-none focus:border-teal-500">YemenJPT, RaidanPro, AI, Sovereign Intelligence</textarea>
+            </div>
+
+            <button type="submit" class="bg-teal-600 hover:bg-teal-500 text-white font-black px-10 py-5 rounded-2xl shadow-xl transition-all">
+                حفظ التغييرات الحية
+            </button>
+        </form>
+    </div>
+</div>

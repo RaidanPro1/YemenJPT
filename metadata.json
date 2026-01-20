@@ -1,0 +1,9 @@
+{
+  "name": "YemenJPT",
+  "description": "أول منصة ذكاء اصطناعي صحفية سيادية في اليمن بتطوير RaidanPro وشراكة بيت الصحافة.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}

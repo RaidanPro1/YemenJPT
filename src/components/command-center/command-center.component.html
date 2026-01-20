@@ -1,0 +1,100 @@
+
+<div class="min-h-screen bg-[#020617] text-white p-10 font-ar" dir="rtl">
+  
+  <!-- Header: System Sovereignty -->
+  <header class="flex justify-between items-center mb-12 bg-white/5 p-8 rounded-[3rem] border border-white/10 backdrop-blur-xl">
+    <div class="flex items-center gap-6">
+      <div class="w-16 h-16 bg-[#00338d] rounded-2xl flex items-center justify-center text-[#e1b000] shadow-2xl border border-white/10">
+        <i class="fa-solid fa-tower-broadcast text-3xl"></i>
+      </div>
+      <div>
+        <h1 class="text-4xl font-black tracking-tighter uppercase leading-none">ROOT<span class="text-[#e1b000]">NOC</span></h1>
+        <p class="text-xs font-bold text-slate-500 uppercase tracking-[0.4em] mt-2">Network Operations Center & Grid Management</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-4">
+       <div class="px-6 py-3 bg-slate-900 rounded-2xl border border-slate-800 flex items-center gap-3">
+          <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+          <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Mesh Syncing</span>
+       </div>
+    </div>
+  </header>
+
+  <!-- God View Grid -->
+  <div *ngIf="!isLoading; else loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+    
+    <div *ngFor="let org of organizations" 
+         class="group relative glass-morphism p-8 rounded-[3.5rem] border border-slate-800 hover:border-[#00338d]/60 transition-all duration-700 shadow-3xl overflow-hidden">
+      
+      <!-- Card Decors (Organism Feel) -->
+      <div class="absolute -top-10 -right-10 w-32 h-32 bg-[#00338d]/5 blur-3xl group-hover:bg-[#00338d]/20 transition-all"></div>
+      
+      <!-- Header: Identity & Status -->
+      <div class="flex justify-between items-start mb-10 relative z-10">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 bg-slate-950 rounded-xl flex items-center justify-center text-white border border-white/5 font-black text-xl shadow-inner">
+            {{ org.name[0] }}
+          </div>
+          <div>
+            <h3 class="font-black text-lg group-hover:text-[#e1b000] transition-colors">{{ org.name }}</h3>
+            <p class="text-[9px] text-slate-500 font-mono">{{ org.domain }}</p>
+          </div>
+        </div>
+        <div [class]="getStatusColor(org)">
+          <i class="fa-solid fa-circle text-[8px]"></i>
+        </div>
+      </div>
+
+      <!-- Real-time Organism Stats -->
+      <div class="space-y-6 relative z-10">
+        <!-- CPU Usage -->
+        <div class="space-y-2">
+          <div class="flex justify-between text-[9px] font-black uppercase tracking-widest text-slate-500">
+            <span>Sovereign Load</span>
+            <span [class.text-red-500]="org.usage?.cpu > 90">{{ org.usage?.cpu }}%</span>
+          </div>
+          <div class="h-1.5 bg-slate-950 rounded-full overflow-hidden border border-white/5">
+            <div class="h-full bg-gradient-to-r from-[#00338d] to-blue-400 transition-all duration-1000" [style.width.%]="org.usage?.cpu"></div>
+          </div>
+        </div>
+
+        <!-- Activity Grid -->
+        <div class="grid grid-cols-2 gap-4">
+           <div class="p-4 bg-slate-950/50 rounded-2xl border border-slate-800 text-center">
+              <p class="text-[8px] text-slate-600 font-black uppercase mb-1">Journalists</p>
+              <p class="text-xl font-black text-white">{{ org.usage?.activeUsers || 0 }}</p>
+           </div>
+           <div class="p-4 bg-slate-950/50 rounded-2xl border border-slate-800 text-center">
+              <p class="text-[8px] text-slate-600 font-black uppercase mb-1">AI Tokens</p>
+              <p class="text-xl font-black text-[#e1b000]">{{ (org.usage?.apiTokensUsed / 1000) | number:'1.1-1' }}k</p>
+           </div>
+        </div>
+      </div>
+
+      <!-- Ghost Action Overlay (Visible on Hover) -->
+      <div class="absolute inset-x-0 bottom-0 p-8 translate-y-full group-hover:translate-y-0 transition-transform duration-500 bg-slate-950/95 border-t border-[#00338d]/40 rounded-t-[3rem] z-20">
+         <div class="flex flex-col gap-3">
+            <button (click)="handleGhostLogin(org.id)" class="w-full py-4 bg-[#00338d] text-white rounded-2xl font-black text-xs uppercase flex items-center justify-center gap-3 shadow-lg">
+              <i class="fa-solid fa-ghost"></i> Ghost Login
+            </button>
+            <button (click)="togglePanicMode(org)" 
+                    class="w-full py-4 border border-red-500/40 text-red-500 rounded-2xl font-black text-xs uppercase flex items-center justify-center gap-3 hover:bg-red-500 hover:text-white transition-all">
+              <i class="fa-solid fa-radiation"></i> Panic Mode
+            </button>
+         </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Loading Decoy -->
+  <ng-template #loading>
+    <div class="flex flex-col items-center justify-center h-96 space-y-4">
+      <div class="w-16 h-16 border-4 border-[#00338d] border-t-[#e1b000] rounded-full animate-spin"></div>
+      <p class="text-slate-500 font-black uppercase tracking-widest text-xs">Accessing Sovereign Mesh Telemetry...</p>
+    </div>
+  </ng-template>
+
+</div>

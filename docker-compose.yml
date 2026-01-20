@@ -1,0 +1,95 @@
+version: '3.9'
+
+services:
+  # DATABASE: PostgreSQL with pgvector for RAG/AI Search
+  db_primary:
+    image: pgvector/pgvector:pg16
+    container_name: raidan-db-primary
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-raidan_secure_pass}
+      POSTGRES_DB: raidan_mesh
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - raidan_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d raidan_mesh"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # CACHE: Redis for task queuing and session persistence
+  redis_queue:
+    image: redis:7-alpine
+    container_name: raidan-redis-queue
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - raidan_net
+
+  # BACKEND: Node.js SaaS Core & Admin Dashboard
+  app_core:
+    build: ./app_core
+    container_name: raidan-app-core
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - DB_URL=postgres://root:${DB_PASSWORD:-raidan_secure_pass}@db_primary:5432/raidan_mesh
+      - REDIS_URL=redis://redis_queue:6379
+      - API_KEY=${API_KEY}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+    volumes:
+      - raidan_uploads:/app/uploads:rw
+      - ./logs/app:/app/logs
+    networks:
+      - raidan_net
+    depends_on:
+      db_primary:
+        condition: service_healthy
+
+  # AI ENGINE: Python service for vector processing and fine-tuning
+  ai_engine:
+    build: ./ai_engine
+    container_name: raidan-ai-engine
+    restart: always
+    environment:
+      - DB_URL=postgres://root:${DB_PASSWORD:-raidan_secure_pass}@db_primary:5432/raidan_mesh
+      - GOOGLE_API_KEY=${API_KEY}
+    volumes:
+      - raidan_uploads:/app/uploads:rw
+    networks:
+      - raidan_net
+    depends_on:
+      - db_primary
+
+  # GATEWAY: Nginx Traffic Controller
+  gateway:
+    image: nginx:stable-alpine
+    container_name: raidan-gateway
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./landing_page:/var/www/landing:ro
+      - raidan_uploads:/var/www/uploads:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    networks:
+      - raidan_net
+    depends_on:
+      - app_core
+
+networks:
+  raidan_net:
+    driver: bridge
+
+volumes:
+  db_data:
+  redis_data:
+  raidan_uploads:
+    driver: local

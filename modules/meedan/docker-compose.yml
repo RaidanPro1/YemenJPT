@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  meedan-check:
+    image: meedan/check-api:latest
+    container_name: raidan-module-meedan
+    restart: always
+    environment:
+      - RAILS_ENV=production
+      - DATABASE_URL=postgres://root:${DB_PASSWORD}@db_primary:5432/meedan_prod
+      - REDIS_URL=redis://redis_queue:6379/1
+    networks:
+      - raidan_public
+      - raidan_private
+    depends_on:
+      - db_primary
+      - redis_queue
+
+networks:
+  raidan_public:
+    external: true
+  raidan_private:
+    external: true

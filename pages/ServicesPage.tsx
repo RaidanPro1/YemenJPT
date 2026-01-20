@@ -45,12 +45,12 @@ const ServicesPage: React.FC = () => {
                </div>
             </section>
 
-            <section className="glass-morphism p-10 rounded-[3rem] border border-slate-800 bg-[#00338d]/5 relative overflow-hidden">
-               <div className="absolute top-0 right-0 p-8 opacity-5"><UserPlus size={100} className="text-white" /></div>
+            <section className="glass-morphism p-10 rounded-[3rem] border border-slate-800 bg-emerald-500/5 relative overflow-hidden">
+               <div className="absolute top-0 right-0 p-8 opacity-5"><UserPlus size={100} className="text-emerald-500" /></div>
                <div className="relative z-10 text-right space-y-4">
                   <h3 className="text-2xl font-black text-white">برنامج التطوع الرقمي</h3>
                   <p className="text-slate-400 font-medium">ساهم بخبراتك في دعم الصحافة المستقلة وتوثيق الانتهاكات. كن جزءاً من شبكة المدافعين عن الحقيقة.</p>
-                  <button className="bg-[#00338d] hover:bg-blue-600 text-white px-10 py-4 rounded-2xl font-black text-xs shadow-2xl transition-all">انضم كمتطوع</button>
+                  <button className="bg-emerald-600 hover:bg-emerald-500 text-white px-10 py-4 rounded-2xl font-black text-xs shadow-2xl transition-all">انضم كمتطوع</button>
                </div>
             </section>
          </div>

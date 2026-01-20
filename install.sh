@@ -1,76 +1,48 @@
+
 #!/bin/bash
-# -----------------------------------------------------------------------------
-# RAIDANPRO SOVEREIGN ECOSYSTEM - MASTER INSTALLER v3.5
-# -----------------------------------------------------------------------------
+
+# YemenJPT Sovereign AI - Auto Installer
+# Developed by RaidanPro
 
 set -e
 
-echo "🛡️  Starting RaidanPro Sovereign Infrastructure Deployment..."
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
 
-# 1. Dependency Check: Docker & Docker Compose
-if ! [ -x "$(command -v docker)" ]; then
-    echo "📦 Installing Docker Engine..."
-    curl -fsSL https://get.docker.com -o get-docker.sh
-    sh get-docker.sh
-    rm get-docker.sh
+echo -e "${BLUE}==============================================${NC}"
+echo -e "${BLUE}   YemenJPT Sovereign AI System Installer    ${NC}"
+echo -e "${BLUE}       Press House Yemen & RaidanPro         ${NC}"
+echo -e "${BLUE}==============================================${NC}"
+
+# Check for root
+if [ "$EUID" -ne 0 ]; then
+  echo -e "${RED}Error: Please run as root (sudo ./install.sh)${NC}"
+  exit 1
 fi
 
-# 2. Directory Scaffolding
-echo "📁 Preparing directory structure at /opt/raidan-system..."
-mkdir -p nginx/certs landing_page/docs logs/app data/{postgres,redis,tenants} uploads
+echo -e "${GREEN}[1/5] Updating System...${NC}"
+apt update && apt upgrade -y
 
-# 3. Environment & Secret Generation
-if [ ! -f .env ]; then
-    echo "🔐 Generating unique military-grade encryption keys..."
-    DB_PASS=$(openssl rand -base64 16)
-    ENC_KEY=$(openssl rand -base64 32)
-    JWT_SEC=$(openssl rand -base64 32)
-    
-    cat <<EOF > .env
-# --- DATABASE ---
-DB_PASSWORD=$DB_PASS
-POSTGRES_USER=root
-POSTGRES_DB=raidan_mesh
+echo -e "${GREEN}[2/5] Installing Docker & Dependencies...${NC}"
+apt install -y docker.io docker-compose curl git
 
-# --- SECURITY ---
-ENCRYPTION_KEY=$ENC_KEY
-JWT_SECRET=$JWT_SEC
-
-# --- AI & DOMAIN ---
-API_KEY=YOUR_GEMINI_API_KEY_HERE
-DOMAIN=raidan.pro
-APP_NAME=YemenJPT
-EOF
-    echo "✅ .env file created. PLEASE UPDATE YOUR API_KEY IN .env"
-else
-    echo "⏭️  .env already exists. Skipping secret generation."
+echo -e "${GREEN}[3/5] Setting up Ollama for Local AI (Falcon/Jais)...${NC}"
+if ! command -v ollama &> /dev/null; then
+    curl -fsSL https://ollama.com/install.sh | sh
 fi
 
-# 4. Fallback SSL Generation (Self-signed for initial boot)
-if [ ! -f nginx/certs/live.crt ]; then
-    echo "🛡️  Generating fallback SSL certificates..."
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout nginx/certs/live.key -out nginx/certs/live.crt \
-    -subj "/C=YE/ST=Sanaa/L=Sanaa/O=RaidanPro/CN=*.raidan.pro"
-fi
+echo -e "${GREEN}[4/5] Pulling Sovereign Models...${NC}"
+ollama pull falcon:7b
+ollama pull qwen2.5:latest
 
-# 5. Build & Launch
-echo "🚀 Building and starting RaidanPro Stack..."
-docker-compose build
+echo -e "${GREEN}[5/5] Launching YemenJPT Newsroom Environment...${NC}"
 docker-compose up -d
 
-# 6. Database Initialization
-echo "⏳ Waiting for Database to stabilize (15s)..."
-sleep 15
-echo "🌱 Running migrations and seeding Root Admin..."
-docker exec raidan-app-core npm run db:migrate
-docker exec raidan-app-core npm run db:seed -- --user="admin@raidan.pro" --pass="password123"
-
-echo "----------------------------------------------------"
-echo "✅ SYSTEM FULLY DEPLOYED"
-echo "🌐 Corporate Home: http://raidan.pro"
-echo "🤖 Root Dashboard: http://ai.raidan.pro"
-echo "🔑 Default User: admin@raidan.pro"
-echo "🔑 Default Pass: password123"
-echo "----------------------------------------------------"
-echo "Next Steps: Update API_KEY in .env and run 'docker-compose restart'"
+echo -e "${BLUE}==============================================${NC}"
+echo -e "${GREEN}SUCCESS: YemenJPT is now active!${NC}"
+echo -e "Frontend: http://localhost"
+echo -e "Storage Vault: http://localhost:8080"
+echo -e "Local AI Node: http://localhost:11434"
+echo -e "${BLUE}==============================================${NC}"

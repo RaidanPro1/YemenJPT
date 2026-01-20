@@ -1,53 +1,49 @@
-# RaidanPro Sovereign Ecosystem 🛡️
-**Production Grade Infrastructure v3.5**
 
-This repository contains the complete unified infrastructure for the **RaidanPro** ecosystem, integrating the **YemenJPT AI Engine** and a high-performance multi-tenant dashboard.
+# YemenJPT Sovereign Intelligence Ecosystem 🇾🇪
 
-## 🏗️ Architecture Overview
-The system uses a **Hybrid Mesh Architecture**:
-- **Nginx Gateway**: Acts as a Layer 7 router, mapping subdomains to tenants and serving static corporate files.
-- **Node.js App Core**: The brain of the SaaS platform. Handles identity, tenant lifecycle, and module orchestration.
-- **Python AI Engine**: Dedicated RAG (Retrieval-Augmented Generation) service using `pgvector` for local knowledge processing.
-- **Sovereign Database**: PostgreSQL with `pgvector` and encrypted storage for sensitive journalistic data.
+[![Production](https://img.shields.io/badge/Status-Production--Ready-green?style=for-the-badge)](https://github.com/RaidanPro1/YemenJPT)
+[![Security](https://img.shields.io/badge/Security-AES--256--E2EE-blue?style=for-the-badge)](https://github.com/RaidanPro1/YemenJPT)
 
-## 🚀 Quick Start
-1. **Prepare Server**: Use Ubuntu 22.04 LTS.
-2. **Execute Deployment**:
-   ```bash
-   chmod +x install.sh
-   ./install.sh
-   ```
-3. **Configure AI**: Edit `.env` to add your `API_KEY` (Gemini API Key).
-4. **Restart**: `docker-compose restart`.
+## 🌐 Overview | نظرة عامة
+**YemenJPT** is the definitive sovereign AI platform for investigative journalism in Yemen. Built by **RaidanPro** in partnership with **Press House Foundation**, it ensures total data independence and journalistic security.
 
-## 🖥️ System Administration
-
-### 1. Root Login
-- **URL**: `https://ai.raidan.pro/login`
-- **Default Credentials**: `admin@raidan.pro` / `password123`
-*Change these immediately upon first login via the Security settings.*
-
-### 2. Branding (God Mode)
-To change the system's global identity without touching code:
-1. Navigate to **"تخصيص الهوية (Branding)"** in the Root Sidebar.
-2. Update the **System Name** (e.g., from RaidanPro to your organization).
-3. Upload a new **SVG/PNG Logo**.
-4. Save Changes. This automatically rebuilds the landing page assets.
-
-### 3. Adding a New Tenant (Multi-Tenancy)
-1. Navigate to **"إدارة المستأجرين (Tenants)"**.
-2. Click **"+ إضافة مؤسسة جديدة (Add Organization)"**.
-3. Enter the **Organization Name** and **Subdomain Slug** (e.g., `aden-news`).
-4. Select desired services (AI Portal, Secure Mail, Newsroom).
-5. The system will automatically provision the DNS records and isolate their data volume in `/var/www/uploads/aden-news`.
-
-### 4. AI Nexus Training
-Manage human feedback from the **"تعلم الآلة (AI Nexus)"** section. Approve human corrections to trigger a LoRA fine-tuning sequence on your local models.
-
-## 🔒 Security Principles
-- **Volume Isolation**: Each tenant's uploads are physically isolated at the filesystem level.
-- **Encryption at Rest**: All API keys and sensitive credentials are encrypted using the `ENCRYPTION_KEY` from your `.env`.
-- **Panic Mode**: Accessible via the Security Dashboard, instantly revokes all active sessions and toggles camouflage on all public endpoints.
+**اليمن جي بي تي** هي المنصة السيادية الأولى للذكاء الاصطناعي الصحفي في اليمن. تم تطويرها بواسطة **RaidanPro** بالشراكة مع **مؤسسة بيت الصحافة** لضمان استقلال البيانات وأمن الصحفيين.
 
 ---
-© 2026 **RaidanPro Communications** | Developed for **Press House Foundation**.
+
+## 🛠️ Key Features | الميزات الأساسية
+- **Code Assistant**: Integrated Gemini-powered system help for Admins.
+- **Sovereign AI**: Local models (Falcon 3) processing sensitive data locally.
+- **Verification Lab**: Advanced digital forensics for video/image metadata.
+- **E2EE Newsroom**: Encrypted collaboration suite.
+
+---
+
+## 🚀 Installation | التثبيت الذكي
+The installer now supports **AI Optimization**. It analyzes your server resources and configures the environment automatically.
+
+```bash
+# Clone the repository
+git clone https://github.com/RaidanPro1/YemenJPT.git
+cd YemenJPT
+
+# Make installer executable
+chmod +x setup.sh
+
+# Run the smart installer
+./setup.sh
+```
+
+### 📋 Prerequisites
+- **RAM**: 8GB Minimum (16GB Recommended).
+- **GPU**: NVIDIA Support (Optional, for 10x faster AI).
+- **Domain**: Cloudflare-managed for SSL/Sovereignty.
+
+---
+
+## 🛡️ Sovereignty Principles
+1. **Data Locality**: No journalistic data ever leaves the local server.
+2. **Zero Training**: Your information is NOT used to train global LLMs.
+3. **Admin Exclusivity**: Code-level system controls are restricted to Root Admins.
+
+© 2024 RaidanPro & Press House Foundation - Yemen.

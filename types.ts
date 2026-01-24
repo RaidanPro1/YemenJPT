@@ -26,6 +26,25 @@ export enum ModuleCategory {
   SYSTEM_MGMT = 'System & Content Management'
 }
 
+export enum ViolationCategory {
+  SHELLING = 'أحداث قصف',
+  CLASHES = 'اشتباكات مسلحة',
+  GATHERING = 'تجمعات مدنية',
+  DISASTER = 'كوارث طبيعية',
+  ARREST = 'اعتقالات'
+}
+
+export interface GeospatialReport {
+  id: string;
+  title: string;
+  category: ViolationCategory;
+  lat: number;
+  lng: number;
+  date: string;
+  description: string;
+  isVerified: boolean;
+}
+
 export enum TenantType {
   ORGANIZATION = 'organization',
   FREELANCER = 'freelancer'
@@ -64,7 +83,6 @@ export enum AiModelType {
   WHISPER_YEMEN = 'Munsit (Yemeni Whisper)'
 }
 
-// Added ViolationStatus enum for the observatory module
 export enum ViolationStatus {
   PENDING = 'قيد التحقق',
   VERIFIED = 'مؤكد',
@@ -72,9 +90,9 @@ export enum ViolationStatus {
 }
 
 export interface TenantResourceQuota {
-  cpuLimit: number; // Cores
-  ramLimit: number; // GB
-  storageLimit: number; // GB
+  cpuLimit: number;
+  ramLimit: number;
+  storageLimit: number;
   apiTokenLimit: number; 
   activeUsersLimit: number;
 }
@@ -95,7 +113,7 @@ export interface TenantSite {
   wpVersion?: string;
   dbName?: string;
   cloudflareStatus: 'synced' | 'pending' | 'error';
-  lastHealthCheck?: number;
+  lastHealth_check?: number;
 }
 
 export interface TenantPortal {
@@ -109,7 +127,7 @@ export interface TenantPortal {
 export interface ApiVaultItem {
   id: string;
   serviceName: string;
-  apiKeyPreview: string; // "sk-...abcd"
+  apiKeyPreview: string;
   isEnabled: boolean;
   usageCount: number;
 }
@@ -141,7 +159,6 @@ export interface SocialMediaLink {
   tokenExpiresAt?: number;
 }
 
-// Updated User interface to include usage metrics and limits
 export interface User {
   id: string;
   name: string;
@@ -203,7 +220,6 @@ export interface ModelVersion {
   createdAt: number;
 }
 
-// Added Course interface for the Academy module
 export interface Course {
   id: string;
   title: string;
@@ -215,15 +231,16 @@ export interface Course {
   hasCertificate: boolean;
 }
 
-// Added Task interface for Collaboration module
+export type TaskPriority = 'high' | 'medium' | 'low';
+
 export interface Task {
   id: string;
   title: string;
   status: 'todo' | 'in_progress' | 'done';
+  priority: TaskPriority;
   assignee?: string;
 }
 
-// Added Comment interface for file/task discussions
 export interface Comment {
   id: string;
   author: string;
@@ -231,7 +248,6 @@ export interface Comment {
   timestamp: number;
 }
 
-// Added PublicationRecord interface for tracking content publishing
 export interface PublicationRecord {
   id: string;
   platform: string;
@@ -239,7 +255,6 @@ export interface PublicationRecord {
   status: string;
 }
 
-// Added SharedFile interface for the Newsroom Collaboration module
 export interface SharedFile {
   id: string;
   name: string;
@@ -255,13 +270,11 @@ export interface SharedFile {
   publications?: PublicationRecord[];
 }
 
-// Added Folder interface for organizing newsroom content
 export interface Folder {
   id: string;
   name: string;
 }
 
-// Added SortOption type for list sorting
 export type SortOption = 'name' | 'date' | 'size';
 
 export interface GeminiConfig {

@@ -1,70 +1,82 @@
-
-# RaidanPro Multi-Tenant Sovereign Mesh 🛡️
-
-The ultimate infrastructure for Sovereign AI and Digital Journalism. Designed for high-security environments and institutional data isolation.
-
-## 🏗️ Architecture Overview
-
-```text
-[ Internet ] 
-     |
-     v
-[ Nginx Gateway (Port 80/443) ] <--- Wildcard SSL (*.raidan.pro)
-     |
-     +--- [ X-Tenant-ID Header Injection ]
-     |
-     +--- (ph-ye.raidan.pro) ----> [ App Core (Schema: tenant_ph_ye) ]
-     |
-     +--- (yemenjpt.raidan.pro) --> [ AI Sovereign Node ]
-     |
-     +--- (tools.raidan.pro) ----> [ Tools Mesh (Lazy Loaded) ]
-```
-
-### 🗝️ Data Isolation Strategy
-- **Database**: We use **PostgreSQL Schemas**. Each tenant has their own schema.
-- **Files**: Physical isolation in `/var/lib/raidan/tenants/{tenant_id}/`.
-- **Identity**: Google OAuth 2.0 integrated with system-level Audit Logs.
-
-## 🚀 Installation Guide
-
-### Prerequisites
-- **OS**: Ubuntu 22.04 LTS or 24.04 LTS.
-- **RAM**: Minimum 8GB (16GB recommended for AI training).
-- **CPU**: 4 Cores minimum.
-- **DNS**: Wildcard A record `*.raidan.pro` pointing to the server IP.
-
-### Step-by-Step
-1. **Clone & Install**:
-   ```bash
-   git clone https://github.com/RaidanPro1/YemenJPT.git
-   cd YemenJPT
-   sudo chmod +x *.sh
-   sudo ./install.sh
-   ```
-2. **Configure Secrets**:
-   Open `.env` and update the placeholders with your actual API keys from Google Cloud and Cloudflare.
-
-3. **Initialize Services**:
-   ```bash
-   sudo ./setup_services.sh
-   ```
-
-4. **Launch**:
-   ```bash
-   sudo ./start.sh
-   ```
-
-## 🛠️ Tenant Management
-New organizations are added via the **Root Dashboard** or CLI:
-```bash
-# CLI Example for manual provisioning
-docker exec raidan-app-core node scripts/provision-tenant.js --name="Saba News" --slug="saba" --domain="saba.ye"
-```
-
-## 🚑 Troubleshooting
-- **Port Conflict**: Check if Nginx or Apache is already running on the host (`lsof -i :80`).
-- **Permission Denied**: Ensure the user has `docker` group privileges or run as `sudo`.
-- **DB Connection**: Ensure `.env` DB_PASSWORD matches the one in Docker.
+# 🛡️ منظومة YemenJPT السيادية (v2.5)
+### البنية التحتية الرقمية الأولى للصحافة الاستقصائية والاستخبارات المفتوحة في اليمن
+**تطوير: RaidanPro | بالشراكة الاستراتيجية مع مؤسسة بيت الصحافة - اليمن**
 
 ---
-© 2025 RaidanPro | Developed in Strategic Partnership with **Press House Foundation**.
+
+## 💡 نظرة عامة (System Overview)
+**YemenJPT** هي منظومة ذكاء اصطناعي "سيادية" مصممة لتمكين الصحفيين والمحققين في اليمن من أدوات متقدمة للتحليل والتحقق والرصد. تتبنى المنظومة فلسفة **"السيادة الرقمية"**، حيث يتم معالجة البيانات الحساسة محلياً (On-Premise) لضمان حماية المصادر والبيانات الوطنية من الرقابة الخارجية.
+
+---
+
+## 🛠️ الترسانة التقنية (The Sovereign Stack)
+
+### 1. الذكاء الاصطناعي الهجين (Hybrid AI Core)
+*   **معالج YemenJPT (Falcon 3):** المحرك السيادي الافتراضي المعتمد على نماذج لغوية ضخمة (LLMs) تمت تهيئتها لفهم السياق السياسي والقانوني اليمني.
+*   **نظام مُنصت (Munsit STT):** محرك تحويل الصوت إلى نص متخصص في اللهجات اليمنية (صنعاني، عدني، تعزي، حضرمي) يعتمد على تقنيات Whisper المخصصة.
+*   **الموجه التقني (Code Assistant):** مساعد برمجيات مدمج لدعم الصحفيين في تحليل قواعد البيانات وبناء أدوات كشط البيانات (Scrapers).
+
+### 2. وحدة التحقق الجنائي (Digital Forensics Unit)
+*   **بصيرة (Basirah/InVID):** تشريح الفيديوهات إطاراً بإطار لكشف التلاعب الزمني والمكاني.
+*   **رسم (Rasm Forensics):** تحليل مستوى الخطأ (ELA) للصور لكشف التعديلات الرقمية (Photoshop Detection).
+*   **كاشف الزيف (Deepfake Detector):** خوارزميات رصد الوجوه المولدة اصطناعياً والوسائط المزيفة.
+
+### 3. نظام كشّاف للاستخبارات (OSINT Suite)
+*   **أثر (Athar):** تتبع البصمة الرقمية والارتباطات الشبكية عبر 1000+ منصة عالمية.
+*   **نبأ (Naba Scraper):** رصد حي وتجميع آلي من تليجرام ومنصات التواصل الاجتماعي (تحليل السرديات).
+*   **درهم (Crypto Tracker):** تتبع المعاملات المالية المشفرة المرتبطة بتمويل النزاعات.
+
+### 4. المرصد الجغرافي (Geospatial Monitoring)
+*   **إسطرلاب (Istirlab):** منصة تصور البيانات الجغرافية لتوثيق الانتهاكات ورسم خرائط النزاع التفاعلية.
+
+---
+
+## 🏗️ المعمارية التقنية (Technical Architecture)
+
+### 🛡️ سيادة البيانات (Data Sovereignty)
+*   **Offline-First:** دعم المعالجة المحلية عبر عقد (Nodes) مستقلة تعمل بـ Docker.
+*   **تشفير مُسند:** تشفير البيانات في "خزنة مُسند" بمعايير AES-256 GCM.
+*   **الشبكة الموزعة:** ارتباط العقد عبر جسر شبكة مشفر (yemenjpt-net) لضمان الخصوصية.
+
+### 💻 تقنيات الواجهة (Frontend)
+*   **Language:** JavaScript/TypeScript (React 18).
+*   **UI/UX:** Tailwind CSS مع دعم أصيل لـ RTL (Right-to-Left).
+*   **Typography:** خط 'Cairo' و 'IBM Plex Sans Arabic'.
+*   **Colors:** 
+    *   Primary: `#003087` (Royal Blue)
+    *   Secondary: `#E6B000` (Golden Yellow)
+
+### ⚙️ البنية التحتية (DevOps & Backend)
+*   **Orchestration:** Docker Compose كوحيد نشر أساسية.
+*   **AI Serving:** Ollama & vLLM لاستضافة النماذج محلياً.
+*   **Database:** PostgreSQL (للبيانات المهيكلة) و Redis (للعمليات اللحظية).
+*   **Security:** Cloudflare WAF & Sovereign Gateway.
+
+---
+
+## 🚀 التشغيل والانتشار (Deployment)
+
+النظام مصمم للنشر السريع كبيئة معزولة:
+
+```bash
+# استنساخ المستودع السيادي
+git clone https://github.com/RaidanPro1/YemenJPT.git
+
+# تهيئة المتغيرات البيئية (إجباري)
+cp .env.example .env
+
+# تشغيل المنظومة بكافة أدواتها
+docker-compose up -d
+```
+
+---
+
+## 📜 ميثاق الحوكمة الأخلاقية
+تلتزم منظومة **YemenJPT** بمبادئ بيت الصحافة:
+1.  **الحقيقة أولاً:** لا يستخدم الذكاء الاصطناعي لتوليد أخبار مضللة.
+2.  **حماية المصادر:** خصوصية البيانات الصحفية مقدسة ولا تخضع للمشاركة.
+3.  **المسؤولية البشرية:** يبقى القرار النهائي للصحفي المحقق (Human-in-the-loop).
+
+---
+**© 2025 RaidanPro Communications | YemenJPT Investigative Ecosystem**
+*نحو إعلام يمني مستقل، سيادي، وممكّن تقنياً.*

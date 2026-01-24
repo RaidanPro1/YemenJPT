@@ -4,7 +4,7 @@ import {
   LogIn, Shield, AlertCircle, Bot, ShieldCheck, Twitter, Github, 
   Youtube, Facebook, Chrome, Globe, Key, Lock, Cpu, Cloud, Layout,
   MessageSquare, UserCircle, Loader2, Fingerprint, Languages, UserPlus, Building2, User as UserIcon,
-  MessageCircle, Phone, Send, Info, Instagram
+  MessageCircle, Phone, Send, Info, Instagram, ArrowRight, RefreshCw
 } from 'lucide-react';
 import { UserRole } from '../types';
 import { AppLogoText, TRANSLATIONS, APP_FULL_NAME, SLOGAN } from '../constants';
@@ -14,13 +14,14 @@ interface LoginPageProps {
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
-  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
   const [registerType, setRegisterType] = useState<'individual' | 'organization'>('individual');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [requestSent, setRequestSent] = useState(false);
+  const [recoverySent, setRecoverySent] = useState(false);
   
   const lang = 'ar';
   const t = (key: string) => (TRANSLATIONS as any)[lang][key] || key;
@@ -31,7 +32,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     setError('');
 
     setTimeout(() => {
-      // منطق التحقق السيادي
       if (email === 'root' && password === 'admin123') {
         onLogin(UserRole.ADMIN);
       } else if (email && password) {
@@ -49,6 +49,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     setTimeout(() => {
       setIsLoading(false);
       setRequestSent(true);
+    }, 2000);
+  };
+
+  const handleForgotSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setRecoverySent(true);
     }, 2000);
   };
 
@@ -72,12 +81,16 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
          </div>
          <div className="grid grid-cols-2 gap-10">
             <div className="p-10 bg-white/5 backdrop-blur-3xl rounded-[3rem] border border-white/5 space-y-6 group hover:border-emerald-500/30 transition-all duration-500">
-               <ShieldCheck size={44} className="text-emerald-500 group-hover:rotate-12 transition-transform" />
+               <span className="p-4 bg-emerald-500/10 rounded-2xl inline-block">
+                <ShieldCheck size={44} className="text-emerald-500 group-hover:rotate-12 transition-transform" />
+               </span>
                <h4 className="text-white font-black text-xl uppercase">تشفير سيادي</h4>
                <p className="text-slate-500 text-sm leading-relaxed">حماية كاملة للبيانات والوثائق الصحفية بمعايير AES-256 GCM.</p>
             </div>
             <div className="p-10 bg-white/5 backdrop-blur-3xl rounded-[3rem] border border-white/5 space-y-6 group hover:border-blue-500/30 transition-all duration-500">
-               <Cpu size={44} className="text-blue-500 group-hover:rotate-12 transition-transform" />
+               <span className="p-4 bg-blue-500/10 rounded-2xl inline-block">
+                <Cpu size={44} className="text-blue-500 group-hover:rotate-12 transition-transform" />
+               </span>
                <h4 className="text-white font-black text-xl uppercase">معالجة هجينة</h4>
                <p className="text-slate-500 text-sm leading-relaxed">ربط ذكي بين الذكاء الاصطناعي السحابي والمعالجة المحلية المعزولة.</p>
             </div>
@@ -91,13 +104,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         <div className="flex justify-center mb-12">
           <div className="bg-slate-900/80 p-1.5 rounded-3xl border border-slate-800 flex flex-row-reverse gap-2">
             <button 
-              onClick={() => { setMode('login'); setError(''); setRequestSent(false); }}
-              className={`px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${mode === 'login' ? 'bg-[#00338d] text-white shadow-xl' : 'text-slate-500 hover:text-white'}`}
+              onClick={() => { setMode('login'); setError(''); setRequestSent(false); setRecoverySent(false); }}
+              className={`px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${mode === 'login' || mode === 'forgot' ? 'bg-[#00338d] text-white shadow-xl' : 'text-slate-500 hover:text-white'}`}
             >
               دخول الهوية
             </button>
             <button 
-              onClick={() => { setMode('register'); setError(''); setRequestSent(false); }}
+              onClick={() => { setMode('register'); setError(''); setRequestSent(false); setRecoverySent(false); }}
               className={`px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${mode === 'register' ? 'bg-[#00338d] text-white shadow-xl' : 'text-slate-500 hover:text-white'}`}
             >
               طلب اعتماد
@@ -117,7 +130,16 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                  <input type="text" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="معرف الصحفي / الكيان المؤسسي" className="w-full bg-slate-950 border border-slate-800 rounded-3xl px-10 py-6 text-white text-lg focus:border-[#00338d] outline-none transition-all shadow-inner text-right" required />
               </div>
               <div className="space-y-4">
-                 <label className="text-[10px] text-slate-500 font-black uppercase tracking-[0.4em] pr-4">{t('pass_label')}</label>
+                 <div className="flex justify-between items-center pr-4">
+                    <label className="text-[10px] text-slate-500 font-black uppercase tracking-[0.4em]">{t('pass_label')}</label>
+                    <button 
+                      type="button"
+                      onClick={() => setMode('forgot')}
+                      className="text-[10px] text-[#e1b000] font-black uppercase tracking-widest hover:text-yellow-400 transition-colors"
+                    >
+                      نسيت مفتاح العبور؟
+                    </button>
+                 </div>
                  <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="••••••••" className="w-full bg-slate-950 border border-slate-800 rounded-3xl px-10 py-6 text-white text-lg focus:border-[#00338d] outline-none transition-all shadow-inner text-right" required />
               </div>
               {error && <div className="p-5 bg-red-500/10 border border-red-500/20 rounded-2xl flex flex-row-reverse items-center gap-4 text-red-500 text-sm font-bold animate-pulse"><AlertCircle size={22}/> {error}</div>}
@@ -146,14 +168,75 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               </div>
             </div>
           </div>
+        ) : mode === 'forgot' ? (
+          <div className="space-y-10 animate-in fade-in flex flex-col flex-1">
+            {recoverySent ? (
+              <div className="text-center py-10 flex-1 flex flex-col justify-center animate-in zoom-in">
+                <div className="w-24 h-24 bg-blue-500/10 rounded-[2.5rem] flex items-center justify-center mx-auto border border-blue-500/20 text-blue-500 mb-8">
+                  <RefreshCw size={48} />
+                </div>
+                <h3 className="text-3xl font-black text-white mb-4">تم إرسال تعليمات الاستعادة</h3>
+                <p className="text-slate-400 font-medium leading-relaxed">
+                  إذا كان الحساب مسجلاً لدينا، فستتلقى تعليمات استعادة الوصول عبر البريد المؤسسي أو جسر الهوية المرتبط خلال دقائق.
+                </p>
+                <button 
+                  onClick={() => { setMode('login'); setRecoverySent(false); }}
+                  className="mt-12 px-10 py-5 bg-[#00338d] text-white rounded-[2rem] font-black text-xs uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl inline-flex items-center justify-center gap-3"
+                >
+                  <ArrowRight size={18} /> العودة للدخول
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleForgotSubmit} className="space-y-10">
+                <div className="text-center mb-10">
+                  <h3 className="text-4xl font-black text-white tracking-tighter uppercase mb-4">استعادة العبور</h3>
+                  <p className="text-slate-500 text-xs font-black uppercase tracking-[0.3em]">أدخل هويتك الرقمية لاستعادة الوصول</p>
+                </div>
+                <div className="space-y-6">
+                  <div className="space-y-4">
+                    <label className="text-[10px] text-slate-500 font-black uppercase tracking-[0.4em] pr-4">{t('email_label')}</label>
+                    <div className="relative">
+                      <UserIcon size={20} className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-500" />
+                      <input 
+                        type="text" 
+                        placeholder="معرف الصحفي / الكيان المؤسسي" 
+                        className="w-full bg-slate-950 border border-slate-800 rounded-3xl pr-16 pl-10 py-6 text-white text-lg focus:border-[#00338d] outline-none transition-all shadow-inner text-right" 
+                        required 
+                      />
+                    </div>
+                  </div>
+                  <div className="p-6 bg-blue-500/5 border border-blue-500/10 rounded-3xl flex items-start gap-4">
+                    <Info size={24} className="text-blue-500 shrink-0 mt-1" />
+                    <p className="text-[10px] text-slate-400 leading-relaxed text-right">
+                      سيتم التحقق من هويتك المؤسسية وإرسال رابط استعادة آمن. في حال عدم الوصول، يرجى التواصل مع مسؤول النظام (Root Admin) عبر قناة الدعم الفوري.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-6">
+                  <button disabled={isLoading} className="w-full bg-[#00338d] hover:bg-blue-600 text-white font-black py-7 rounded-[2.5rem] shadow-3xl flex items-center justify-center gap-6 active:scale-95 transition-all text-lg uppercase tracking-widest group">
+                    {isLoading ? <Loader2 className="animate-spin w-8 h-8" /> : <>إرسال طلب الاستعادة <RefreshCw size={24} className="rotate-180" /></>}
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => setMode('login')}
+                    className="text-slate-500 hover:text-white font-black text-xs uppercase tracking-widest transition-colors py-2"
+                  >
+                    إلغاء والعودة للدخول
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         ) : requestSent ? (
           <div className="space-y-10 animate-in zoom-in text-center py-10 flex-1 flex flex-col justify-center">
              <div className="w-24 h-24 bg-emerald-500/10 rounded-[2.5rem] flex items-center justify-center mx-auto border border-emerald-500/20 text-emerald-500 mb-8">
                 <ShieldCheck size={48} />
              </div>
              <h3 className="text-3xl font-black text-white">{t('pending_approval')}</h3>
-             <p className="text-slate-400 font-medium">سيتم مراجعة بياناتك والتحقق من هويتك المهنية خلال 24 ساعة.</p>
-             <button onClick={() => setMode('login')} className="px-10 py-4 bg-slate-800 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-700 transition-all mt-8">العودة للدخول</button>
+             <p className="text-slate-400 font-medium leading-relaxed px-6">سيتم مراجعة بياناتك والتحقق من هويتك المهنية من قبل وحدة الحوكمة خلال 24 ساعة.</p>
+             <button onClick={() => { setMode('login'); setRequestSent(false); }} className="px-10 py-5 bg-slate-800 text-white rounded-[2rem] font-black text-xs uppercase tracking-widest hover:bg-slate-700 transition-all mt-8 inline-flex items-center justify-center gap-3">
+               <ArrowRight size={18} /> العودة للدخول
+             </button>
           </div>
         ) : (
           <form onSubmit={handleRegisterSubmit} className="space-y-8 animate-in slide-in-from-bottom duration-500 flex-1">
@@ -205,7 +288,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           </form>
         )}
 
-        {/* أيقونة واتساب للتواصل الفوري (بدون نصوص كما هو مطلوب) */}
+        {/* أيقونة واتساب للتواصل الفوري */}
         <div className="mt-auto pt-10 border-t border-slate-800/50 flex justify-center">
            <a 
               href="https://wa.me/967784606083" 
@@ -216,7 +299,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             >
               <MessageCircle size={44} className="group-hover:scale-110 transition-transform duration-500" />
               <div className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full border-4 border-[#020617] animate-pulse"></div>
-              {/* تلميح صغير يظهر عند المرور */}
               <div className="absolute bottom-full mb-4 px-4 py-2 bg-slate-900 border border-slate-800 text-white text-[9px] font-black rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap uppercase tracking-widest">
                 Urgent Support Node
               </div>

@@ -7,10 +7,9 @@ import {
   MoreVertical, ChevronRight, Folder, FolderPlus, MessageCircle, FileUp, Info,
   Globe, Twitter, Facebook, ExternalLink, PenTool, Check, Loader2, Newspaper,
   Eye, History, AlertCircle, Sparkles, Layout, LayoutGrid, Rocket,
-  Zap, ShieldCheck as ShieldIcon
+  Zap, ShieldCheck as ShieldIcon, Flag, Circle
 } from 'lucide-react';
-// Updated imports to reflect newly defined types in types.ts
-import { Task, SharedFile, SortOption, UserRole, User as UserType, Comment, Folder as FolderType, PublicationRecord } from '../types';
+import { Task, TaskPriority, SharedFile, User as UserType, Comment, Folder as FolderType } from '../types';
 import { notificationService } from '../services/notifications';
 
 const CollaborationPage: React.FC = () => {
@@ -20,7 +19,13 @@ const CollaborationPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFile, setSelectedFile] = useState<SharedFile | null>(null);
   
-  // Newsroom Stats
+  // Tasks state
+  const [tasks, setTasks] = useState<Task[]>([
+    { id: 't1', title: 'مراجعة مسودة تحقيق الفساد المالي', status: 'in_progress', priority: 'high', assignee: 'زيد اليماني' },
+    { id: 't2', title: 'تواصل مع مصادر في ميناء الحديدة', status: 'todo', priority: 'medium', assignee: 'أحمد صالح' },
+    { id: 't3', title: 'أرشفة صور الانتهاكات في تعز', status: 'done', priority: 'low', assignee: 'سارة' },
+  ]);
+
   const [wpSites] = useState([
     { name: 'أخبار بيت الصحافة', url: 'news.ph-ye.org', status: 'online' },
     { name: 'بوابة التقارير', url: 'reports.ph-ye.org', status: 'online' }
@@ -44,6 +49,29 @@ const CollaborationPage: React.FC = () => {
       ]);
     }
   }, []);
+
+  const handlePriorityChange = (taskId: string, priority: TaskPriority) => {
+    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, priority } : t));
+    notificationService.notify(`📝 تم تحديث أولوية المهمة إلى ${priority.toUpperCase()}`);
+  };
+
+  const getPriorityColor = (priority: TaskPriority) => {
+    switch (priority) {
+      case 'high': return 'text-red-500 bg-red-500/10 border-red-500/20';
+      case 'medium': return 'text-amber-500 bg-amber-500/10 border-amber-500/20';
+      case 'low': return 'text-blue-500 bg-blue-500/10 border-blue-500/20';
+      default: return 'text-slate-500 bg-slate-500/10 border-slate-500/20';
+    }
+  };
+
+  const getPriorityLabel = (priority: TaskPriority) => {
+    switch (priority) {
+      case 'high': return 'عالية';
+      case 'medium': return 'متوسطة';
+      case 'low': return 'منخفضة';
+      default: return priority;
+    }
+  };
 
   return (
     <div className="space-y-6 flex flex-col h-full animate-in fade-in duration-500 pb-10 font-ar" dir="rtl">
@@ -136,10 +164,70 @@ const CollaborationPage: React.FC = () => {
                 </div>
              </div>
           </div>
+        ) : activeTab === 'tasks' ? (
+          <div className="flex-1 overflow-y-auto p-4 space-y-6">
+            <div className="flex flex-row-reverse justify-between items-center mb-6">
+              <h3 className="text-2xl font-black text-white">إدارة المهام التحريرية</h3>
+              <button className="bg-[#00338d] text-white px-6 py-2 rounded-xl text-xs font-black flex items-center gap-2">
+                <Plus size={18}/> مهمة جديدة
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {['todo', 'in_progress', 'done'].map((status) => (
+                <div key={status} className="space-y-4">
+                  <div className="flex flex-row-reverse items-center justify-between px-4 py-2 bg-slate-900/50 rounded-xl border border-slate-800">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      {status === 'todo' ? 'قيد الانتظار' : status === 'in_progress' ? 'قيد العمل' : 'مكتمل'}
+                    </span>
+                    <span className="bg-slate-800 text-slate-500 text-[10px] font-black px-2 py-0.5 rounded-full">
+                      {tasks.filter(t => t.status === status).length}
+                    </span>
+                  </div>
+                  <div className="space-y-4">
+                    {tasks.filter(t => t.status === status).map((task) => (
+                      <div key={task.id} className="glass-morphism p-6 rounded-[2rem] border border-slate-800 hover:border-[#00338d]/40 transition-all group shadow-xl space-y-4">
+                        <div className="flex flex-row-reverse justify-between items-start">
+                          <h4 className="text-sm font-black text-white text-right leading-relaxed flex-1 ml-4 group-hover:text-[#e1b000] transition-colors">{task.title}</h4>
+                          <button className="p-1 text-slate-600 hover:text-white transition-colors"><MoreVertical size={16}/></button>
+                        </div>
+                        <div className="flex flex-row-reverse items-center justify-between pt-4 border-t border-slate-800/50">
+                          <div className="flex flex-row-reverse items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-[#00338d] border border-white/10 flex items-center justify-center text-[8px] font-black">
+                              {task.assignee?.charAt(0)}
+                            </div>
+                            <span className="text-[10px] text-slate-500 font-bold">{task.assignee}</span>
+                          </div>
+                          
+                          {/* Priority Selector/Display */}
+                          <div className="relative group/priority">
+                            <button className={`px-3 py-1 rounded-lg text-[9px] font-black flex items-center gap-1.5 border transition-all ${getPriorityColor(task.priority)}`}>
+                              <Flag size={10} fill="currentColor" />
+                              {getPriorityLabel(task.priority)}
+                            </button>
+                            <div className="absolute bottom-full left-0 mb-2 hidden group-hover/priority:flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl z-50">
+                              {(['high', 'medium', 'low'] as TaskPriority[]).map((p) => (
+                                <button 
+                                  key={p}
+                                  onClick={() => handlePriorityChange(task.id, p)}
+                                  className={`px-4 py-2 text-[10px] font-black hover:bg-white/5 transition-colors whitespace-nowrap text-right flex flex-row-reverse items-center gap-2 ${p === task.priority ? 'text-[#e1b000]' : 'text-slate-400'}`}
+                                >
+                                  <Circle size={8} fill={p === 'high' ? '#ef4444' : p === 'medium' ? '#f59e0b' : '#3b82f6'} stroke="none" />
+                                  {getPriorityLabel(p)}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         ) : (
           /* Previous Files Layout */
           <div className="flex-1 flex gap-6 overflow-hidden">
-             {/* ... (Existing files browser layout from previous files) ... */}
              <div className="flex-1 glass-morphism rounded-[3rem] border border-slate-800 flex items-center justify-center">
                 <p className="text-slate-600 font-black uppercase tracking-widest text-xs">مستعرض الملفات السيادي جاهز</p>
              </div>

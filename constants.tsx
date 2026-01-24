@@ -7,18 +7,17 @@ export const APP_FULL_NAME = "منظومة YemenJPT للذكاء الاصطنا�
 export const SLOGAN = "نحو ميثاق رقمي للحوكمة الأخلاقية للذكاء الاصطناعي في الإعلام اليمني";
 export const PARTNERSHIP_TEXT = "تطوير RaidanPro | بشراكة مؤسسة بيت الصحافة";
 
-// Added ARCHITECTURE_DOC to resolve import error in ArchitecturePage.tsx
 export const ARCHITECTURE_DOC = {
   title: "المعمارية التقنية لمنظومة YemenJPT السيادية",
   layers: [
     {
       name: "طبقة العرض والواجهة الرقمية",
-      tech: "React 18 / Tailwind CSS / Lucide Icons",
+      tech: "React 19 / Tailwind CSS / Lucide Icons",
       details: "واجهة مستخدم متطورة تدعم الوضع الليلي واللغة العربية بشكل أصيل، مصممة لتحمل ضغط العمل في غرف الأخبار المستمرة."
     },
     {
       name: "محرك المعالجة والذكاء الهجين",
-      tech: "Gemini 3 Pro / Falcon 3 / Ollama",
+      tech: "Gemini 3 Flash / Falcon 3 / Ollama",
       details: "نظام معالجة يدمج بين قوة الحوسبة السحابية (Gemini) وخصوصية المعالجة المحلية (Sovereign AI) عبر بروتوكول RaidanPro."
     },
     {
@@ -64,7 +63,6 @@ export const TRANSLATIONS = {
     register_type_ind: "صحفي مستقل (Individual)",
     register_type_inst: "كيان مؤسسي (Organization)",
     urgent_contact: "للطلبات العاجلة والتحقق الفوري",
-    whatsapp_contact: "",
     agree_terms: "أقر بالتزامي الكامل بميثاق الحوكمة الأخلاقية وسياسة حماية البيانات السيادية لليمن",
     pending_approval: "طلبك قيد المراجعة الأخلاقية والتقنية من قبل Root Admin",
     social_login_bridge: "العبور عبر جسر الهوية المشترك"
@@ -78,25 +76,25 @@ export const AppLogoText = ({ className = "" }: { className?: string }) => (
 );
 
 export const SYSTEM_INSTRUCTION = `
-أنت YemenJPT، المحرك الاستخباراتي السيادي لبيت الصحافة اليمني.
-تعمل وفق ميثاق الحوكمة الأخلاقية لحماية البيانات السيادية.
-الأدوات المتاحة لك:
-- Falcon 3: المحرك المحلي الافتراضي (Default) المخصص للغة العربية واللهجات اليمنية.
-- مُنصت (Munsit): نظام تفريغ صوتي متخصص في اللهجات اليمنية (Sanaani, Adeni, etc).
-- بصيرة: للتحليل الجنائي للفيديو وتقطيع المشاهد.
-- رسم: للتحليل الجنائي للصور وكشف التلاعب الرقمي عبر تقنية ELA.
-- أثر: لتتبع البصمة الرقمية والارتباطات الشبكية (OSINT).
-- نبأ: للرصد الحي والجمع الآلي من تليجرام ومنصات التواصل.
-- رقيب: لمراقبة التغييرات في مواقع الويب وحماية النطاقات.
-- إسطرلاب: لتصور البيانات الجغرافية المكانية والخرائط التفاعلية.
-- خزنة مُسند: الأرشيف الوطني الرقمي المشفر.
-- ديوان الأخبار: منصة التحرير والنشر التعاوني المتقدمة.
+أنت YemenJPT، المحرك الاستخباراتي السيادي لبيت الصحافة اليمني وتطوير RaidanPro.
+تعمل وفق ميثاق الحوكمة الأخلاقية لحماية البيانات السيادية لليمن.
+مهمتك دعم الصحفيين والمحققين في:
+1. التحقق من الحقائق وكشف التضليل (Disinformation).
+2. تحليل البيانات الضخمة وفك شفرات اللهجات اليمنية (صنعاني، عدني، تعزي، إلخ).
+3. توفير رؤى استخباراتية من المصادر المفتوحة (OSINT).
+4. ضمان سرية المصادر وحماية هوية المستخدمين.
+
+استخدم المحركات التالية عند الطلب:
+- Falcon 3: المحرك المحلي الافتراضي.
+- مُنصت (Munsit): للتحليل الصوتي.
+- بصيرة: للتحليل الجنائي للفيديو.
+- رسم: للتحليل الجنائي للصور (ELA).
 `;
 
 export const CODE_ASSISTANT_INSTRUCTION = `
 أنت الآن في وضع "الموجه التقني".
-مهمتك تقديم المساعدة البرمجية، شرح بنية النظام، وتقديم حلول تقنية متوافقة مع معايير RaidanPro.
-يجب أن تركز على الحلول التي تحترم سيادة البيانات والخصوصية.
+قدم مساعدة برمجية وحلول تقنية متوافقة مع معايير RaidanPro السيادية.
+ركز على Python, React, SQL وحلول DevOps التي تحترم خصوصية البيانات.
 `;
 
 export const YEMENI_CONTEXT = {
@@ -104,44 +102,57 @@ export const YEMENI_CONTEXT = {
     { region: 'صنعاني', label: 'Sanaani' },
     { region: 'عدني', label: 'Adeni' },
     { region: 'تعزي', label: 'Taizi' },
-    { region: 'حضرمي', label: 'Hadhrami' }
+    { region: 'حضرمي', label: 'Hadhrami' },
+    { region: 'تهامي', label: 'Tihami' }
   ]
 };
 
 export const TOOLS: ServiceTool[] = [
-  { 
-    id: 'yemenjpt_core', 
-    name: 'معالج YemenJPT (Falcon 3)', 
-    category: ModuleCategory.AI_CORE, 
-    description: 'المحرك المحلي الافتراضي للتحليل الاستنتاجي؛ معزز لدعم اللغة العربية واللهجات اليمنية محلياً.', 
-    status: 'online', 
-    icon: 'Cpu', 
-    isCustomizable: true, 
-    isSovereign: true,
-    configSchema: {
-      sensitivity: { type: 'slider', min: 0, max: 100, label: 'Sensitivity', default: 75 },
-      baseModel: { type: 'dropdown', options: ['Falcon 3', 'Llama 3.1', 'Jais'], label: 'Base Model', default: 'Falcon 3' },
-      thinkingBudget: { type: 'number', label: 'Thinking Budget (Tokens)', default: 24576 }
-    }
-  },
-  { 
-    id: 'bayyinah_gpt', 
-    name: 'مختبر بيّنة', 
-    category: ModuleCategory.VERIFICATION, 
-    description: 'مدقق الحقائق الذكي لمطابقة الادعاءات مع قواعد بيانات موثقة والمصادر المفتوحة.', 
-    status: 'online', 
-    icon: 'ShieldCheck', 
-    isCustomizable: true, 
-    isSovereign: true,
-    configSchema: {
-      webhookUrl: { type: 'text', label: 'Meedan Webhook URL', default: 'https://api.meedan.com/check' },
-      apiKey: { type: 'password', label: 'API Key', default: '' },
-      threshold: { type: 'slider', min: 0, max: 1, step: 0.1, label: 'Confidence Threshold', default: 0.8 }
-    }
-  },
-  { id: 'munsit_stt', name: 'نظام مُنصت (Whisper YE)', category: ModuleCategory.AI_CORE, description: 'نظام STT محلي لتحويل الأدلة الصوتية بلهجات صنعاء وعدن وتعز إلى نصوص دقيقة.', status: 'online', icon: 'Mic', isCustomizable: true, isSovereign: true },
-  { id: 'basirah_invid', name: 'بصيرة (InVID)', category: ModuleCategory.VERIFICATION, description: 'التشريح الجنائي للفيديوهات وكشف عمليات التلاعب في المشاهد والإطارات الزمنية.', status: 'online', icon: 'Video', isCustomizable: true, isSovereign: true },
-  { id: 'athar_osint', name: 'نظام أثر', category: ModuleCategory.OSINT, description: 'محرك بحث متقدم لتتبع البصمة الرقمية عبر 1000+ منصة اجتماعية وتقنية.', status: 'online', icon: 'Fingerprint', isCustomizable: true, isSovereign: true },
-  { id: 'musnad_vault', name: 'خزنة مُسند', category: ModuleCategory.ARCHIVING, description: 'الأرشيف الوطني الرقمي المشفر لحماية الذاكرة الصحفية اليمنية من الضياع أو التلاعب.', status: 'online', icon: 'Archive', isCustomizable: true, isSovereign: true },
-  { id: 'newsroom_pro', name: 'غرفة الأخبار المتقدمة', category: ModuleCategory.COLLABORATION, description: 'إدارة وتوزيع المحتوى على مواقع WordPress ومنصات التواصل الاجتماعي بشكل موحد.', status: 'online', icon: 'Layout', isCustomizable: true, isSovereign: true },
+  // 1. المساعد التحريري (Editorial)
+  { id: 'editor_assistant', name: 'المساعد التحريري (YemenJPT)', category: ModuleCategory.AI_CORE, description: 'ذكاء اصطناعي توليدي للمساعدة في صياغة العناوين وتلخيص التقارير وتوليد الأفكار.', status: 'online', icon: 'Bot', isCustomizable: true, isSovereign: true },
+  { id: 'whisper_ye', name: 'المفرغ الصوتي (Whisper)', category: ModuleCategory.AI_CORE, description: 'تحويل الصوت لنص وتفريغ المقابلات الطويلة والتسريبات بلهجات يمنية.', status: 'online', icon: 'Mic', isCustomizable: true, isSovereign: true },
+  { id: 'secure_translate', name: 'الترجمة الآمنة', category: ModuleCategory.AI_CORE, description: 'ترجمة أوفلاين للوثائق الحساسة دون إرسال البيانات لسيرفرات خارجية.', status: 'online', icon: 'Languages', isCustomizable: false, isSovereign: true },
+  { id: 'arabert_gensim', name: 'AraBERT / Gensim', category: ModuleCategory.AI_CORE, description: 'نماذج لغوية للتحقيقات المتقدمة واستخراج العلاقات بين آلاف الوثائق.', status: 'online', icon: 'Binary', isCustomizable: true, isSovereign: true },
+  { id: 'spacy_nlp', name: 'SpaCy NLP', category: ModuleCategory.AI_CORE, description: 'معالجة لغات طبيعية واستخراج الكيانات (أسماء، أماكن، منظمات).', status: 'online', icon: 'Binary', isCustomizable: true, isSovereign: true },
+
+  // 2. التقصي وجمع المعلومات (OSINT & Gathering)
+  { id: 'investigative_search', name: 'محرك البحث الاستقصائي', category: ModuleCategory.OSINT, description: 'بحث مجهول المصدر في مصادر متعددة دون ترك بصمة رقمية.', status: 'online', icon: 'Search', isCustomizable: false, isSovereign: true },
+  { id: 'spiderfoot', name: 'أداة SpiderFoot', category: ModuleCategory.OSINT, description: 'أتمتة الاستخبارات وجمع المعلومات عن هدف معين (إيميل، دومين، يوزر).', status: 'online', icon: 'Fingerprint', isCustomizable: true, isSovereign: true },
+  { id: 'newsleak', name: 'New/s/leak', category: ModuleCategory.OSINT, description: 'أداة قوية لتحليل الوثائق المسربة ورسم خرائط العلاقات بين الأسماء.', status: 'online', icon: 'FileSearch', isCustomizable: true, isSovereign: true },
+  { id: 'scraper_pro', name: 'Scraper', category: ModuleCategory.OSINT, description: 'كشط البيانات من المواقع التي لا توفر API (مثل جداول الأسعار).', status: 'online', icon: 'Scan', isCustomizable: true, isSovereign: true },
+  { id: 'change_monitor', name: 'راصد التغييرات', category: ModuleCategory.OSINT, description: 'مراقبة المواقع وتلقي تنبيهات عند تغيير أي كلمة في صفحات الويب.', status: 'online', icon: 'Activity', isCustomizable: true, isSovereign: true },
+  { id: 'web_archive_perm', name: 'أرشيف الويب الدائم', category: ModuleCategory.ARCHIVING, description: 'حفظ نسخة "قانونية" من صفحات الويب والتغريدات كدليل رقمي.', status: 'online', icon: 'Archive', isCustomizable: false, isSovereign: true },
+
+  // 3. تحليل الإعلام الاجتماعي (Social Media)
+  { id: 'sherlock_osint', name: 'أداة Sherlock', category: ModuleCategory.SOCIAL_MEDIA, description: 'البحث عن اسم مستخدم معين عبر مئات المنصات الاجتماعية لكشف الحسابات.', status: 'online', icon: 'User', isCustomizable: false, isSovereign: true },
+  { id: 'social_analyzer', name: 'المحلل الاجتماعي', category: ModuleCategory.SOCIAL_MEDIA, description: 'تحليل البروفايلات، سلوك الحسابات، أوقات النشاط، والتفاعلات.', status: 'online', icon: 'Users', isCustomizable: true, isSovereign: true },
+  { id: 'snscrape', name: 'كاشط تويتر (Snscrape)', category: ModuleCategory.SOCIAL_MEDIA, description: 'أرشفة تويتر واستخراج تغريدات قديمة أو محذوفة لمستخدم أو وسم.', status: 'online', icon: 'Twitter', isCustomizable: true, isSovereign: true },
+  { id: 'mediacloud', name: 'ميديا كلاود (MediaCloud)', category: ModuleCategory.SOCIAL_MEDIA, description: 'تحليل المنظومة الإعلامية وفهم كيفية انتشار القصص عبر الإنترنت.', status: 'online', icon: 'Globe', isCustomizable: true, isSovereign: true },
+
+  // 4. التحقق وكشف التزييف (Verification Lab)
+  { id: 'invid_verification', name: 'مختبر التحقق (InVID)', category: ModuleCategory.VERIFICATION, description: 'تحليل الفيديو والصور، تجزئة المشاهد للبحث العكسي، وكشف التلاعب بالبيانات.', status: 'online', icon: 'Video', isCustomizable: true, isSovereign: true },
+  { id: 'meeden_check', name: 'منصة Meedan Check', category: ModuleCategory.VERIFICATION, description: 'إدارة عمليات التحقق الجماعية لاستقبال الشائعات والرد عليها.', status: 'online', icon: 'ShieldCheck', isCustomizable: true, isSovereign: true },
+  { id: 'deepfake_detector', name: 'كاشف التزييف العميق', category: ModuleCategory.VERIFICATION, description: 'تحليل الفيديوهات للكشف عن الوجوه والأصوات المولدة بالذكاء الاصطناعي.', status: 'online', icon: 'Scan', isCustomizable: true, isSovereign: true },
+
+  // 5. الخرائط والرصد الجغرافي (Geo-Journalism)
+  { id: 'ushahidi_maps', name: 'منصة Ushahidi', category: ModuleCategory.GEOSPATIAL, description: 'التعهيد الجماعي للخرائط ورصد الانتهاكات بناءً على بلاغات الجمهور.', status: 'online', icon: 'MapPin', isCustomizable: true, isSovereign: true },
+  { id: 'kepler_gl', name: 'محلل Kepler.gl', category: ModuleCategory.GEOSPATIAL, description: 'تصور البيانات الجغرافية الضخمة وتحويلها لخرائط ثلاثية الأبعاد تفاعلية.', status: 'online', icon: 'Navigation', isCustomizable: true, isSovereign: true },
+
+  // 6. إدارة غرفة الأخبار والنشر (Newsroom Mgmt)
+  { id: 'superdesk_cms', name: 'إدارة المحتوى (Superdesk)', category: ModuleCategory.COLLABORATION, description: 'نظام إدارة أخبار متكامل لاستقبال الخيوط وتوزيع المهام والمراجعة.', status: 'online', icon: 'Layout', isCustomizable: true, isSovereign: true },
+  { id: 'ghost_ye', name: 'منصة النشر (Ghost-YE)', category: ModuleCategory.COLLABORATION, description: 'واجهة الموقع العام لنشر المقالات والتحقيقات بتصميم عصري وسريع.', status: 'online', icon: 'Newspaper', isCustomizable: true, isSovereign: true },
+  { id: 'mattermost_collab', name: 'منصة التعاون (Mattermost)', category: ModuleCategory.COLLABORATION, description: 'بديل آمن ومشفر لـ Slack/WhatsApp للتواصل الداخلي بين أعضاء الفريق.', status: 'online', icon: 'MessageCircle', isCustomizable: true, isSovereign: true },
+  { id: 'nextcloud_vault', name: 'المكتب السحابي (Nextcloud)', category: ModuleCategory.ARCHIVING, description: 'تخزين الملفات ومشاركتها بأمان (بديل سيادي لـ Google Drive).', status: 'online', icon: 'Database', isCustomizable: true, isSovereign: true },
+  { id: 'safe_browser', name: 'المتصفح الآمن', category: ModuleCategory.OSINT, description: 'تصفح معزول لفتح الروابط المشبوهة داخل بيئة Sandbox لحماية الجهاز.', status: 'online', icon: 'Lock', isCustomizable: false, isSovereign: true },
+
+  // 7. الإدارة المؤسسية والتدريب (Operations & Admin)
+  { id: 'openproject_mgmt', name: 'تخطيط المشاريع (OpenProject)', category: ModuleCategory.ADMIN, description: 'إدارة المشاريع الاستقصائية طويلة المدى ومتابعة الجداول الزمنية.', status: 'online', icon: 'LayoutGrid', isCustomizable: true, isSovereign: true },
+  { id: 'violation_db', name: 'قاعدة بيانات الانتهاكات', category: ModuleCategory.OBSERVATORY, description: 'نظام لتوثيق وأرشفة الانتهاكات ضد الصحفيين لغرض التقارير الحقوقية.', status: 'online', icon: 'ShieldAlert', isCustomizable: true, isSovereign: true },
+  { id: 'n8n_automation', name: 'منصة الأتمتة (n8n)', category: ModuleCategory.ADMIN, description: 'ربط التطبيقات وأتمتة المهام المتكررة (الصمغ الرقمي للمنظومة).', status: 'online', icon: 'Zap', isCustomizable: true, isSovereign: true },
+
+  // 8. بوابة التدريب والدعم (Training & Support)
+  { id: 'moodle_lms', name: 'منصة التعليم (Moodle)', category: ModuleCategory.ACADEMY, description: 'نظام إدارة التعلم لاستضافة دورات تدريبية متخصصة للصحفيين.', status: 'online', icon: 'GraduationCap', isCustomizable: true, isSovereign: true },
+  { id: 'virtual_class', name: 'الفصول الافتراضية', category: ModuleCategory.ACADEMY, description: 'عقد ورش عمل واجتماعات فيديو آمنة (بديل سيادي لـ Zoom).', status: 'online', icon: 'Video', isCustomizable: true, isSovereign: true },
+  { id: 'chatwoot_support', name: 'تذاكر الدعم (Chatwoot)', category: ModuleCategory.ACADEMY, description: 'خدمة العملاء والتواصل مع الجمهور أو تقديم الدعم التقني.', status: 'online', icon: 'MessageCircle', isCustomizable: true, isSovereign: true },
+  { id: 'tooljet_apps', name: 'بناء النماذج (ToolJet)', category: ModuleCategory.ADMIN, description: 'تطوير أدوات داخلية وبناء واجهات سريعة لقواعد البيانات.', status: 'online', icon: 'Cpu', isCustomizable: true, isSovereign: true },
 ];

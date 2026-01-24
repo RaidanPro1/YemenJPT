@@ -8,22 +8,23 @@
     <meta name="description" content="Sovereign AI for Investigative Journalism in Yemen.">
     <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
-            --brand-blue: #00338d;
+            --brand-blue: #003087;
             --brand-gold: #e1b000;
         }
         body {
-            font-family: 'Tajawal', 'Inter', sans-serif;
+            font-family: 'Cairo', 'Inter', sans-serif;
             background-color: #020617;
             color: #f8fafc;
             letter-spacing: -0.01em;
-            line-height: 1.7; /* Optimized spacing */
+            line-height: 1.7;
             -webkit-font-smoothing: antialiased;
         }
         .font-en { font-family: 'Inter', sans-serif; letter-spacing: -0.02em; }
-        .font-ar { font-family: 'Tajawal', sans-serif; }
+        .font-ar { font-family: 'Cairo', sans-serif; }
         
         .glass-morphism {
             background: rgba(15, 23, 42, 0.75);
@@ -31,7 +32,6 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         
-        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #020617; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 12px; }
@@ -39,10 +39,23 @@
         .animate-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .spacing-relaxed { gap: 2rem; }
-        .card-padding { padding: 2.5rem; }
+        /* Leaflet Overrides for Brand Consistency */
+        .leaflet-container {
+            background: #0f172a !important;
+            font-family: 'Cairo', sans-serif !important;
+        }
+        .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+            background: #1e293b !important;
+            color: #f8fafc !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem !important;
+        }
+        .leaflet-control-zoom-in, .leaflet-control-zoom-out {
+            background-color: #003087 !important;
+            color: white !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+        }
         
-        /* Language Specific Directions */
         [dir="rtl"] .text-start { text-align: right; }
         [dir="ltr"] .text-start { text-align: left; }
     </style>
@@ -55,7 +68,8 @@
     "@google/genai": "https://esm.sh/@google/genai@^1.37.0",
     "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react-router-dom": "https://esm.sh/react-router-dom@^7.12.0"
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.12.0",
+    "leaflet": "https://esm.sh/leaflet@1.9.4"
   }
 }
 </script>

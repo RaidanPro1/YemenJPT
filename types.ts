@@ -57,12 +57,11 @@ export enum TenantStatus {
 }
 
 export enum UserRole {
-  ADMIN = 'Root Admin',
-  EDITOR_CHIEF = 'Editor-in-Chief',
-  MONITOR = 'Violation Monitor',
-  TRAINER = 'Academy Trainer',
-  ANALYST = 'Data Analyst',
-  VERIFIER = 'Fact Verifier',
+  ADMIN = 'Command Center (Super-Admin)',
+  EDITOR_CHIEF = 'Newsroom OS (Editor-in-Chief)',
+  VERIFIER = 'Forensic Lab (Fact-Checker)',
+  ANALYST = 'AI Engine Room (DevOps/AI Ops)',
+  // Added JOURNALIST role to fix undefined role error in LoginPage.tsx
   JOURNALIST = 'Investigative Journalist',
   GUEST = 'Guest/Trial'
 }

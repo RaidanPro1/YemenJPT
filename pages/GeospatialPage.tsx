@@ -1,6 +1,10 @@
 
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { MapPin, Layers, Navigation, Plus, Filter, Info, ShieldCheck, Calendar, X } from 'lucide-react';
+import { 
+  MapPin, Layers, Navigation, Plus, Filter, Info, ShieldCheck, Calendar, X,
+  // Added History to provide the icon component and shadow the global History type
+  History 
+} from 'lucide-react';
 import { notificationService } from '../services/notifications';
 import { GeospatialReport, ViolationCategory } from '../types';
 import L from 'leaflet';

@@ -7,7 +7,7 @@ import {
   ShieldAlert, Box, Cpu, Mic, Video, ImageIcon, 
   Fingerprint, Radio, MapPin, Globe, Newspaper, GraduationCap, 
   Briefcase, FileSearch, Loader2, Key, Lock, BookOpen, BrainCircuit,
-  MessageSquare, LayoutGrid
+  MessageSquare, LayoutGrid, Shield
 } from 'lucide-react';
 
 import { UserRole, User, UserStatus } from './types';
@@ -35,6 +35,7 @@ const ArchivePage = lazy(() => import('./pages/ArchivePage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const DocsPage = lazy(() => import('./pages/DocsPage'));
+const CollaborationPage = lazy(() => import('./pages/CollaborationPage'));
 
 const FloatingAssistant = ({ user }: { user: User }) => {
   const { t } = useContext(LanguageContext);
@@ -133,20 +134,40 @@ const AppContent: React.FC = () => {
 
   if (!user && location.pathname !== '/login') return <Navigate to="/login" />;
 
-  const navItems = [
-    { to: '/', icon: LayoutGrid, label: 'portal' },
-    { to: '/dashboard', icon: LayoutDashboard, label: 'dashboard' },
-    { to: '/docs', icon: BookOpen, label: 'مستندات المنظومة' },
-    { to: '/observatory', icon: ShieldAlert, label: 'observatory' },
-    { to: '/factcheck', icon: FileSearch, label: 'factcheck' },
-    { to: '/academy', icon: GraduationCap, label: 'academy' },
-    { to: '/mediahub', icon: Newspaper, label: 'mediahub' },
-    { to: '/archive', icon: Archive, label: 'archive' },
-    { to: '/osint', icon: Search, label: 'osint' },
-    { to: '/verification', icon: ShieldCheck, label: 'verification' },
-    { to: '/ai', icon: Bot, label: 'ai' },
-    { to: '/services', icon: Briefcase, label: 'services' },
-  ];
+  const getNavItems = () => {
+    if (!user) return [];
+    
+    const baseItems = [
+      { to: '/', icon: LayoutGrid, label: 'portal' },
+      { to: '/docs', icon: BookOpen, label: 'مستندات المنظومة' },
+    ];
+
+    const roleItems: any = {
+      [UserRole.ADMIN]: [
+        { to: '/admin', icon: Shield, label: '🛡️ Command Center' },
+        { to: '/admin/ai-retraining', icon: Cpu, label: '⚙️ AI Engine Room' },
+        { to: '/dashboard', icon: LayoutDashboard, label: 'dashboard' },
+      ],
+      [UserRole.EDITOR_CHIEF]: [
+        { to: '/collaboration', icon: Newspaper, label: '📰 Newsroom OS' },
+        { to: '/mediahub', icon: MessageSquare, label: 'mediahub' },
+      ],
+      [UserRole.VERIFIER]: [
+        { to: '/verification', icon: ShieldCheck, label: '🔍 Forensic Lab' },
+        { to: '/factcheck', icon: FileSearch, label: 'factcheck' },
+        { to: '/observatory', icon: ShieldAlert, label: 'observatory' },
+      ],
+      [UserRole.ANALYST]: [
+        { to: '/admin/ai-retraining', icon: Cpu, label: '⚙️ AI Engine Room' },
+        { to: '/osint', icon: Search, label: 'osint' },
+        { to: '/ai', icon: Bot, label: 'ai' },
+      ]
+    };
+
+    return [...baseItems, ...(roleItems[user.role] || [])];
+  };
+
+  const navItems = getNavItems();
 
   return (
     <LanguageContext.Provider value={{ lang, t }}>
@@ -171,17 +192,6 @@ const AppContent: React.FC = () => {
                     {isSidebarOpen && <span className="text-[10px] font-black uppercase tracking-widest">{t(item.label)}</span>}
                   </Link>
                 ))}
-                
-                {user.role === UserRole.ADMIN && (
-                  <div className="pt-4 mt-4 border-t border-slate-800/60 space-y-1.5">
-                    <Link to="/admin" className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all ${location.pathname === '/admin' ? 'bg-[#003087] text-white shadow-lg' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
-                      <Settings size={20} /> {isSidebarOpen && <span className="text-[10px] font-black uppercase tracking-widest">{t('admin')}</span>}
-                    </Link>
-                    <Link to="/admin/ai-retraining" className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all ${location.pathname === '/admin/ai-retraining' ? 'bg-[#003087] text-white shadow-lg' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
-                      <BrainCircuit size={20} /> {isSidebarOpen && <span className="text-[10px] font-black uppercase tracking-widest">تحسين AI</span>}
-                    </Link>
-                  </div>
-                )}
               </nav>
               <div className="p-6 border-t border-slate-800/60">
                  <button onClick={handleLogout} className="w-full flex items-center gap-4 px-5 py-3.5 rounded-2xl text-slate-500 hover:text-red-500 transition-all duration-300">
@@ -197,7 +207,7 @@ const AppContent: React.FC = () => {
                 <button onClick={() => setSidebarOpen(!isSidebarOpen)} className="p-2 text-slate-400 hover:text-white transition-colors"><Menu size={24} /></button>
                 <div className="flex items-center gap-6">
                   <div className="text-right hidden sm:block">
-                     <p className="text-[10px] font-black text-[#e1b000] uppercase tracking-widest leading-none mb-1">المستخدم السيادي</p>
+                     <p className="text-[10px] font-black text-[#e1b000] uppercase tracking-widest leading-none mb-1">{user.role}</p>
                      <p className="text-xs font-bold text-white">{user.name}</p>
                   </div>
                   <img src={user.avatar} className="w-10 h-10 rounded-xl border border-[#003087] shadow-lg" alt="User Avatar" />
@@ -242,6 +252,7 @@ const AppContent: React.FC = () => {
                     <Route path="/services" element={<ServicesPage />} />
                     <Route path="/admin" element={<AdminPage />} />
                     <Route path="/admin/ai-retraining" element={<AdminAIRetraining />} />
+                    <Route path="/collaboration" element={<CollaborationPage />} />
                   </Routes>
                 </Suspense>
               </div>

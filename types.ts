@@ -6,48 +6,18 @@ export enum AiProviderType {
 
 export enum ModuleCategory {
   OSINT = 'OSINT & Digital Research',
-  SOCIAL_MEDIA = 'Public Opinion Analysis',
-  VERIFICATION = 'Digital Forensics',
   AI_CORE = 'Sovereign AI Processor',
+  VERIFICATION = 'Digital Forensics',
   GEOSPATIAL = 'Geospatial Monitoring',
   MONITORING = 'News Monitoring',
   ARCHIVING = 'Sovereign Archiving',
   COLLABORATION = 'Newsroom Collaboration',
   ADMIN = 'System Administration',
-  AUTOMATION = 'Workflow Automation',
-  OBSERVATORY = 'Violations Observatory',
-  FACT_CHECK = 'Fact-Checking Unit',
-  ACADEMY = 'Media Academy',
   FINANCIAL = 'Financial & Data Journalism',
-  INDICATOR_LAB = 'Indicator Lab (Early Warning)',
-  ORG_MGMT = 'Organizational Management',
-  PRODUCTIVITY = 'Productivity & Workflow',
   CMS = 'Content Publishing (CMS)',
-  SYSTEM_MGMT = 'System & Content Management'
-}
-
-export enum ViolationCategory {
-  SHELLING = 'أحداث قصف',
-  CLASHES = 'اشتباكات مسلحة',
-  GATHERING = 'تجمعات مدنية',
-  DISASTER = 'كوارث طبيعية',
-  ARREST = 'اعتقالات'
-}
-
-export interface GeospatialReport {
-  id: string;
-  title: string;
-  category: ViolationCategory;
-  lat: number;
-  lng: number;
-  date: string;
-  description: string;
-  isVerified: boolean;
-}
-
-export enum TenantType {
-  ORGANIZATION = 'organization',
-  FREELANCER = 'freelancer'
+  SECURITY = 'Security & Identity',
+  ACADEMY = 'The Academy',
+  OBSERVATORY = 'Press House Observatory'
 }
 
 export enum TenantStatus {
@@ -57,72 +27,88 @@ export enum TenantStatus {
 }
 
 export enum UserRole {
-  ADMIN = 'Command Center (Super-Admin)',
-  EDITOR_CHIEF = 'Newsroom OS (Editor-in-Chief)',
-  VERIFIER = 'Forensic Lab (Fact-Checker)',
-  ANALYST = 'AI Engine Room (DevOps/AI Ops)',
-  // Added JOURNALIST role to fix undefined role error in LoginPage.tsx
-  JOURNALIST = 'Investigative Journalist',
-  GUEST = 'Guest/Trial'
+  ADMIN = 'Root Admin',
+  EDITOR_CHIEF = 'Editor-in-Chief',
+  JOURNALIST = 'Investigative Journalist'
 }
 
 export enum UserStatus {
   APPROVED = 'Approved',
-  PENDING = 'Pending',
-  REJECTED = 'Rejected'
+  PENDING = 'Pending'
 }
 
 export enum AiModelType {
   FALCON_3 = 'Falcon 3 (Sovereign Arabic)',
-  JAIS = 'Jais (Arabic Native)',
-  QWEN_3 = 'Qwen 3 (Reasoning Core)',
-  LLAMA_3_1 = 'Llama 3.1 (Global)',
-  GEMINI_2_5 = 'Gemini 2.5 Flash (Cloud)',
-  GEMINI_PRO = 'Gemini 3 Pro (Cloud)',
-  WHISPER_YEMEN = 'Munsit (Yemeni Whisper)'
+  GEMINI_3_PRO = 'Gemini 3 Pro (Cloud)'
 }
 
-export enum ViolationStatus {
-  PENDING = 'قيد التحقق',
-  VERIFIED = 'مؤكد',
-  ARCHIVED = 'مؤرشف'
+export interface GlobalSettings {
+  brandName: string;
+  logoUrl: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  footerText: string;
+  primaryColor: string;
+  whatsappNumber: string;
 }
 
-export interface TenantResourceQuota {
-  cpuLimit: number;
-  ramLimit: number;
-  storageLimit: number;
-  apiTokenLimit: number; 
-  activeUsersLimit: number;
+export interface SeoMetadata {
+  id: string;
+  route: string;
+  title: string;
+  description: string;
+  keywords: string[];
+  ogImage: string;
 }
 
-export interface TenantResourceUsage {
-  cpuUsage: number;
-  ramUsage: number;
-  storageUsage: number;
-  apiTokensUsed: number;
-  activeUsers: number;
+export interface AuthProviderConfig {
+  name: 'google' | 'facebook';
+  isEnabled: boolean;
+  clientId: string;
+  clientSecret: string;
 }
 
+export interface SecuritySettings {
+  isPanicModeActive: boolean;
+  authProviders: AuthProviderConfig[];
+}
+
+export interface TrainingFeedback {
+  id: string;
+  inputData: string;
+  aiPrediction: string;
+  humanCorrection: string;
+  status: 'pending' | 'approved' | 'discarded';
+  timestamp: number;
+}
+
+// Added missing TenantType enum
+export enum TenantType {
+  INDIVIDUAL = 'individual',
+  ORGANIZATION = 'organization'
+}
+
+// Added missing TenantSite interface
 export interface TenantSite {
   id: string;
   siteUrl: string;
-  type: 'wordpress' | 'ghost' | 'portfolio';
-  status: 'active' | 'maintenance' | 'deploying' | 'error';
-  wpVersion?: string;
-  dbName?: string;
-  cloudflareStatus: 'synced' | 'pending' | 'error';
-  lastHealth_check?: number;
+  type: string;
+  status: string;
+  wpVersion: string;
+  dbName: string;
+  cloudflareStatus: string;
 }
 
+// Added missing TenantPortal interface
 export interface TenantPortal {
   id: string;
   name: string;
   subdomain: string;
-  type: 'yemenjpt' | 'mail' | 'vault' | 'newsroom';
+  type: string;
   isEnabled: boolean;
 }
 
+// Added missing ApiVaultItem interface
 export interface ApiVaultItem {
   id: string;
   serviceName: string;
@@ -131,31 +117,38 @@ export interface ApiVaultItem {
   usageCount: number;
 }
 
-export interface Organization extends Tenant {
-  sites: TenantSite[];
-  portals: TenantPortal[];
-  apiVault: ApiVaultItem[];
-}
-
-export interface Tenant {
+// Expanded Organization interface to support AdminPage and AdminTenants requirements
+export interface Organization {
   id: string;
   name: string;
-  slug: string;
-  type: TenantType;
+  domain: string;
+  primaryDomain?: string;
+  slug?: string;
+  type?: TenantType;
   status: TenantStatus;
-  primaryDomain: string;
-  quota: TenantResourceQuota;
-  usage: TenantResourceUsage;
-  socialLinks: SocialMediaLink[];
-  createdAt: number;
-}
-
-export interface SocialMediaLink {
-  id: string;
-  platform: 'facebook' | 'twitter' | 'telegram' | 'youtube';
-  handle: string;
-  status: 'connected' | 'expired' | 'error';
-  tokenExpiresAt?: number;
+  createdAt?: number;
+  quota?: {
+    cpuLimit: number;
+    ramLimit: number;
+    storageLimit: number;
+    apiTokenLimit: number;
+    activeUsersLimit: number;
+  };
+  usage: {
+    cpu: number;
+    ram: number;
+    storage: number;
+    cpuUsage?: number;
+    ramUsage?: number;
+    storageUsage?: number;
+    apiTokensUsed?: number;
+    activeUsers?: number;
+  };
+  services: string[];
+  sites?: TenantSite[];
+  portals?: TenantPortal[];
+  apiVault?: ApiVaultItem[];
+  socialLinks?: { id: string; platform: string; handle: string; status: string }[];
 }
 
 export interface User {
@@ -164,82 +157,36 @@ export interface User {
   email: string;
   role: UserRole;
   avatar: string;
-  tenantId?: string;
   status: UserStatus;
-  oauthConnected?: boolean;
-  usage?: {
-    cpu: number;
-    ram: number;
-    storage: number;
-    apiTokens: number;
-    cpuLimit: number;
-    ramLimit: number;
-    storageLimit: number;
-    apiLimit: number;
-  };
 }
 
+// Added missing ServiceTool interface
 export interface ServiceTool {
   id: string;
   name: string;
   category: ModuleCategory;
   description: string;
-  status: 'online' | 'offline' | 'provisioning' | 'error';
+  status: 'online' | 'offline';
   icon: string;
   isCustomizable: boolean;
   isSovereign: boolean;
   configSchema?: any;
-  currentSettings?: Record<string, any>;
 }
 
-export interface TrainingFeedback {
-  id: string;
-  inputData: any;
-  aiPrediction: any;
-  humanCorrection: any;
-  status: 'pending' | 'approved' | 'rejected';
-  timestamp: number;
+// Added missing GeminiConfig interface
+export interface GeminiConfig {
+  accessToken?: string;
+  specificModel?: string;
+  lowLatency?: boolean;
+  dialect?: string;
+  useColabGpu?: boolean;
+  useSearch?: boolean;
+  useThinking?: boolean;
+  thinkingBudget?: number;
+  isCodeAssistant?: boolean;
 }
 
-export interface TrainingJob {
-  id: string;
-  targetModel: string;
-  dataset: string;
-  status: 'queued' | 'training' | 'validating' | 'completed' | 'failed';
-  progress: number;
-  createdAt: number;
-}
-
-export interface ModelVersion {
-  id: string;
-  version: string;
-  baseModel: AiModelType;
-  isActive: boolean;
-  accuracy: number;
-  createdAt: number;
-}
-
-export interface Course {
-  id: string;
-  title: string;
-  trainer: string;
-  duration: string;
-  level: string;
-  enrolled: number;
-  image: string;
-  hasCertificate: boolean;
-}
-
-export type TaskPriority = 'high' | 'medium' | 'low';
-
-export interface Task {
-  id: string;
-  title: string;
-  status: 'todo' | 'in_progress' | 'done';
-  priority: TaskPriority;
-  assignee?: string;
-}
-
+// Added missing Collaboration related types
 export interface Comment {
   id: string;
   author: string;
@@ -249,9 +196,6 @@ export interface Comment {
 
 export interface PublicationRecord {
   id: string;
-  platform: string;
-  url: string;
-  status: string;
 }
 
 export interface SharedFile {
@@ -265,8 +209,19 @@ export interface SharedFile {
   timestamp: number;
   organizationId: string;
   folderId: string;
-  commentsList?: Comment[];
-  publications?: PublicationRecord[];
+  commentsList: Comment[];
+  publications: PublicationRecord[];
+}
+
+export interface Task {
+  id: string;
+  title: string;
+  status: string;
+}
+
+export enum SortOption {
+  NEWEST = 'newest',
+  OLDEST = 'oldest'
 }
 
 export interface Folder {
@@ -274,16 +229,21 @@ export interface Folder {
   name: string;
 }
 
-export type SortOption = 'name' | 'date' | 'size';
+// Added missing ViolationStatus enum
+export enum ViolationStatus {
+  PENDING = 'قيد التحقق',
+  VERIFIED = 'مؤكد',
+  ARCHIVED = 'مؤرشف'
+}
 
-export interface GeminiConfig {
-  accessToken?: string;
-  specificModel?: AiModelType;
-  lowLatency?: boolean;
-  dialect?: string;
-  useColabGpu?: boolean;
-  useSearch?: boolean;
-  isCodeAssistant?: boolean;
-  useThinking?: boolean;
-  thinkingBudget?: number;
+// Added missing Course interface
+export interface Course {
+  id: string;
+  title: string;
+  trainer: string;
+  duration: string;
+  level: string;
+  enrolled: number;
+  image: string;
+  hasCertificate: boolean;
 }

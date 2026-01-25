@@ -4,7 +4,7 @@ import { Eye, ShieldAlert, MapPin, Calendar, Filter, Download, Plus, Search, Tre
 import { ViolationStatus } from '../types';
 
 const ObservatoryPage: React.FC = () => {
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeFilter, setActiveFilter] = useState('الكل');
 
   const mockViolations = [
     { id: '1', title: 'اعتقال تعسفي لصحفي استقصائي', governorate: 'صنعاء', date: '2024-05-20', status: ViolationStatus.PENDING, type: 'حرية الصحافة' },
@@ -22,7 +22,7 @@ const ObservatoryPage: React.FC = () => {
           </h1>
           <p className="text-slate-400 mt-4 text-lg font-medium leading-relaxed max-w-3xl">نظام الرصد المركزي لتوثيق وتحليل الانتهاكات ضد الصحافة والمدنيين في اليمن، مدعوم بتقنيات التوثيق غير القابلة للتغيير.</p>
         </div>
-        <button className="bg-[#00338d] hover:bg-blue-600 text-white px-10 py-5 rounded-[2.5rem] font-black flex items-center gap-4 shadow-3xl transition-all">
+        <button className="bg-[#00338d] hover:bg-blue-600 text-white px-10 py-5 rounded-[2.5rem] font-black flex items-center gap-4 shadow-3xl transition-all border border-blue-500/20">
            <Plus size={24}/> تسجيل انتهاك جديد
         </button>
       </div>
@@ -70,7 +70,7 @@ const ObservatoryPage: React.FC = () => {
                               <td className="p-8 text-slate-400 font-mono text-xs">{v.date}</td>
                               <td className="p-8"><span className="px-4 py-1.5 bg-slate-900 rounded-xl text-[10px] text-slate-300 font-black">{v.type}</span></td>
                               <td className="p-8">
-                                 <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${v.status === ViolationStatus.VERIFIED ? 'bg-emerald-500/10 text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.2)]' : (v.status === ViolationStatus.PENDING ? 'bg-amber-500/10 text-amber-500' : 'bg-slate-800 text-slate-500')}`}>
+                                 <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${v.status === ViolationStatus.VERIFIED ? 'bg-[#e1b000]/10 text-[#e1b000] border border-[#e1b000]/20' : (v.status === ViolationStatus.PENDING ? 'bg-amber-500/10 text-amber-500' : 'bg-slate-800 text-slate-500')}`}>
                                     {v.status}
                                  </span>
                               </td>
@@ -92,10 +92,10 @@ const ObservatoryPage: React.FC = () => {
                   </div>
                   <div className="space-y-3">
                      <div className="flex flex-row-reverse justify-between text-[10px] font-black text-slate-500 uppercase tracking-widest"><span>45</span> <span>قضايا قيد المتابعة</span></div>
-                     <div className="h-2.5 bg-slate-900 rounded-full overflow-hidden border border-white/5 shadow-inner"><div className="h-full bg-emerald-500 w-[40%] shadow-[0_0_15px_rgba(16,185,129,0.5)]"></div></div>
+                     <div className="h-2.5 bg-slate-900 rounded-full overflow-hidden border border-white/5 shadow-inner"><div className="h-full bg-[#e1b000] w-[40%] shadow-[0_0_15px_rgba(225,176,0,0.5)]"></div></div>
                   </div>
                </div>
-               <button className="w-full py-5 bg-slate-800 hover:bg-white hover:text-[#00338d] text-white rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition-all shadow-xl">تصدير تقرير المانحين (AI Summary)</button>
+               <button className="w-full py-5 bg-[#00338d] hover:bg-[#e1b000] hover:text-[#00338d] text-white rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition-all shadow-xl">تصدير تقرير المانحين (AI Summary)</button>
             </div>
 
             <div className="glass-morphism p-8 rounded-[3rem] border border-[#00338d]/20 bg-[#00338d]/5 space-y-4 shadow-2xl">

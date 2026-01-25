@@ -4,77 +4,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YemenJPT | Intelligence Platform</title>
-    <meta name="description" content="Sovereign AI for Investigative Journalism in Yemen.">
-    <link rel="icon" type="image/png" href="logo.png">
+    <title id="site-title">ريدان برو | هندسة المرونة والذكاء الاصطناعي السيادي</title>
+    <meta name="description" id="site-description" content="RaidanPro هي الوكالة الرائدة في اليمن للاتصال الاستراتيجي والتحول الرقمي ومطور منظومة YemenJPT.">
+    <link rel="icon" type="image/png" id="site-favicon" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --brand-blue: #003087;
-            --brand-gold: #e1b000;
+            --primary-color: #00338d; /* Royal Blue */
+            --accent-color: #e1b000;  /* Gold */
+            --secondary-color: #020617; /* Deep Navy */
         }
-        body {
-            font-family: 'Cairo', 'Inter', sans-serif;
-            background-color: #020617;
-            color: #f8fafc;
-            letter-spacing: -0.01em;
-            line-height: 1.7;
-            -webkit-font-smoothing: antialiased;
-        }
-        .font-en { font-family: 'Inter', sans-serif; letter-spacing: -0.02em; }
-        .font-ar { font-family: 'Cairo', sans-serif; }
+        body { font-family: 'Tajawal', sans-serif; background-color: #fcfcfc; scroll-behavior: smooth; margin: 0; padding: 0; }
+        .gold-accent { color: var(--accent-color); }
+        .bg-gold-accent { background-color: var(--accent-color); }
+        .blue-accent { color: var(--primary-color); }
+        .bg-blue-accent { background-color: var(--primary-color); }
         
-        .glass-morphism {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
+        .login-mini-panel { transform: scale(0); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; }
+        .login-mini-panel.active { transform: scale(1); opacity: 1; }
         
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #020617; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 12px; }
-        
-        .animate-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .brand-bg { background-color: var(--primary-color); }
+        .brand-text { color: var(--primary-color); }
+        .hero-title-dynamic { color: var(--secondary-color); }
 
-        /* Leaflet Overrides for Brand Consistency */
-        .leaflet-container {
-            background: #0f172a !important;
-            font-family: 'Cairo', sans-serif !important;
+        /* Ensure the React root can overlay or hide the landing page when active */
+        #root:not(:empty) + .landing-content {
+            display: none;
         }
-        .leaflet-popup-content-wrapper, .leaflet-popup-tip {
-            background: #1e293b !important;
-            color: #f8fafc !important;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1rem !important;
-        }
-        .leaflet-control-zoom-in, .leaflet-control-zoom-out {
-            background-color: #003087 !important;
-            color: white !important;
-            border: 1px solid rgba(255,255,255,0.1) !important;
-        }
-        
-        [dir="rtl"] .text-start { text-align: right; }
-        [dir="ltr"] .text-start { text-align: left; }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "recharts": "https://esm.sh/recharts@^3.6.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.37.0",
     "react/": "https://esm.sh/react@^19.2.3/",
     "react": "https://esm.sh/react@^19.2.3",
-    "@google/genai": "https://esm.sh/@google/genai@^1.37.0",
     "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react-router-dom": "https://esm.sh/react-router-dom@^7.12.0",
-    "leaflet": "https://esm.sh/leaflet@1.9.4"
+    "@angular/core": "https://esm.sh/@angular/core@^21.1.0",
+    "@angular/common/": "https://esm.sh/@angular/common@^21.1.0/",
+    "rxjs/": "https://esm.sh/rxjs@^7.8.2/",
+    "rxjs": "https://esm.sh/rxjs@^7.8.2",
+    "@angular/router": "https://esm.sh/@angular/router@^21.1.0"
   }
 }
 </script>
 </head>
-<body>
+<body class="antialiased">
+    <!-- React Mount Point -->
     <div id="root"></div>
+
+    <!-- Static Landing Page Content -->
+    <div class="landing-content">
+        <header class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 h-20 flex items-center px-6 justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-[#00338d] rounded-lg flex items-center justify-center text-white font-black" id="header-logo-container">
+                    <img id="header-logo-img" src="logo.png" class="w-7 h-7 hidden" alt="Logo">
+                    <span id="header-logo-letter">R</span>
+                </div>
+                <span class="font-black text-[#00338d] text-xl" id="brand-name-text">RaidanPro</span>
+            </div>
+            <nav class="hidden md:flex gap-8 font-bold text-slate-600">
+                <a href="#home" class="hover:text-[#00338d]">الرئيسية</a>
+                <a href="#about" class="hover:text-[#00338d]">رؤيتنا</a>
+                <a href="docs/technical-whitepaper.html" class="hover:text-[#00338d]">الوثائق التقنية</a>
+            </nav>
+            <a href="#/login" class="bg-[#00338d] text-white px-6 py-2 rounded-full font-bold shadow-lg shadow-blue-900/20" id="cta-button">دخول المنصة</a>
+        </header>
+
+        <section id="home" class="pt-48 pb-32 px-6 text-center max-w-4xl mx-auto">
+            <h1 class="text-6xl font-black text-slate-900 leading-tight hero-title-dynamic" id="hero-title">
+                هندسة المرونة في <span class="text-[#e1b000] tracking-tighter" id="hero-title-accent">عالم متغير</span>
+            </h1>
+            <p class="mt-8 text-xl text-slate-500 leading-relaxed italic" id="hero-subtitle">
+                "نحول التحديات المعقدة إلى فرص مستدامة. شريكك الاستراتيجي في الاتصال والتحول الرقمي منذ 2011."
+            </p>
+            <div class="mt-12 flex justify-center gap-4">
+                <a href="#/login" class="bg-[#00338d] text-white px-10 py-4 rounded-2xl font-black text-lg shadow-xl hover:bg-blue-800 transition-all" id="hero-primary-btn">اكتشف حلولنا</a>
+                <a href="docs/technical-whitepaper.html" class="border-2 border-slate-200 px-10 py-4 rounded-2xl font-black text-lg text-slate-600 hover:bg-slate-50 transition-all" id="hero-secondary-btn">الورقة التقنية</a>
+            </div>
+        </section>
+
+        <!-- Floating UI -->
+        <div class="fixed bottom-8 left-8 z-[999] flex flex-col items-center gap-4">
+            <div id="loginPanel" class="login-mini-panel bg-white p-6 rounded-[2rem] border border-slate-200 shadow-2xl w-72 text-right">
+                <h4 class="font-black text-slate-900 mb-4" id="login-panel-title">دخول الهوية السيادية</h4>
+                <input type="email" placeholder="البريد المؤسسي" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs mb-3 outline-none">
+                <button onclick="window.location.hash='#/login'" class="w-full bg-[#00338d] text-white py-3 rounded-xl font-black text-xs shadow-md">دخول المنصة</button>
+            </div>
+            <button onclick="document.getElementById('loginPanel').classList.toggle('active')" class="w-14 h-14 bg-[#00338d] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform">
+                <i class="fa-solid fa-lock"></i>
+            </button>
+            <a id="whatsapp-link" href="https://wa.me/967772662106" class="w-16 h-16 bg-[#00338d] border-2 border-[#e1b000] text-[#e1b000] rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform">
+                <i class="fa-brands fa-whatsapp text-3xl"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main JS Application Entry -->
+    <script type="module" src="index.tsx"></script>
+
+    <script>
+        async function hydrateCMS() {
+            try {
+                const settings = JSON.parse(localStorage.getItem('raidan_global_settings') || '{}');
+                
+                if (settings.brandName) {
+                    const brandText = document.getElementById('brand-name-text');
+                    if (brandText) brandText.innerText = settings.brandName;
+                }
+                
+                const heroTitle = document.getElementById('hero-title');
+                if (settings.heroTitle && heroTitle) heroTitle.innerHTML = settings.heroTitle;
+                
+                const heroSubtitle = document.getElementById('hero-subtitle');
+                if (settings.heroSubtitle && heroSubtitle) heroSubtitle.innerText = settings.heroSubtitle;
+                
+                if (settings.primaryColor) {
+                    document.documentElement.style.setProperty('--primary-color', settings.primaryColor);
+                }
+                
+                if (settings.logoUrl) {
+                    const logoImg = document.getElementById('header-logo-img');
+                    const logoLetter = document.getElementById('header-logo-letter');
+                    if (logoImg && logoLetter) {
+                        logoImg.src = settings.logoUrl;
+                        logoImg.classList.remove('hidden');
+                        logoLetter.classList.add('hidden');
+                    }
+                }
+            } catch (e) {
+                console.error("CMS Hydration Failed", e);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', hydrateCMS);
+    </script>
 </body>
 </html>

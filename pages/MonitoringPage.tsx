@@ -40,7 +40,6 @@ const MonitoringPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Feed */}
         <div className="lg:col-span-2 space-y-6">
            {activeTab === 'news' && (
              <div className="glass-morphism rounded-[2.5rem] border border-slate-800 overflow-hidden">
@@ -49,7 +48,7 @@ const MonitoringPage: React.FC = () => {
                       <span className="w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
                       <span className="text-xs font-black text-white uppercase tracking-widest">Live Newsroom Feed</span>
                    </div>
-                   <button onClick={() => setIsLive(!isLive)} className={`px-3 py-1 rounded-lg text-[10px] font-black border ${isLive ? 'border-emerald-500 text-emerald-500' : 'border-slate-700 text-slate-500'}`}>
+                   <button onClick={() => setIsLive(!isLive)} className={`px-3 py-1 rounded-lg text-[10px] font-black border ${isLive ? 'border-[#e1b000] text-[#e1b000]' : 'border-slate-700 text-slate-500'}`}>
                       {isLive ? 'AUTO-UPDATE ON' : 'PAUSED'}
                    </button>
                 </div>
@@ -93,12 +92,12 @@ const MonitoringPage: React.FC = () => {
            {activeTab === 'sentiment' && (
              <div className="glass-morphism p-8 rounded-[2.5rem] border border-slate-800 space-y-8">
                 <div className="flex justify-between items-center border-b border-slate-800 pb-4">
-                   <h3 className="text-xl font-bold text-white flex items-center gap-2"><PieChart size={20} className="text-emerald-500"/> تحليل المشاعر لليوم</h3>
-                   <span className="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-lg">AI ANALYTICS</span>
+                   <h3 className="text-xl font-bold text-white flex items-center gap-2"><PieChart size={20} className="text-[#e1b000]"/> تحليل المشاعر لليوم</h3>
+                   <span className="text-[10px] font-black text-[#e1b000] bg-[#e1b000]/10 px-3 py-1 rounded-lg">AI ANALYTICS</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                   <div className="p-6 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 text-center space-y-2">
-                      <p className="text-xs font-black text-emerald-500 uppercase">إيجابي</p>
+                   <div className="p-6 bg-[#e1b000]/10 rounded-2xl border border-[#e1b000]/20 text-center space-y-2">
+                      <p className="text-xs font-black text-[#e1b000] uppercase">إيجابي</p>
                       <p className="text-3xl font-black text-white">22%</p>
                    </div>
                    <div className="p-6 bg-slate-800/40 rounded-2xl border border-slate-800 text-center space-y-2">
@@ -123,9 +122,9 @@ const MonitoringPage: React.FC = () => {
                       <div className="flex justify-between items-center text-xs">
                          <span className="text-slate-500">مبادرات السلام</span>
                          <div className="w-48 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-emerald-500 w-[60%]"></div>
+                            <div className="h-full bg-[#e1b000] w-[60%]"></div>
                          </div>
-                         <span className="text-emerald-400 font-bold">تفاؤل</span>
+                         <span className="text-[#e1b000] font-bold">تفاؤل</span>
                       </div>
                    </div>
                 </div>
@@ -133,7 +132,6 @@ const MonitoringPage: React.FC = () => {
            )}
         </div>
 
-        {/* Sidebar Trends */}
         <div className="space-y-6">
            <div className="glass-morphism p-8 rounded-[2.5rem] border border-slate-800 space-y-6">
               <h3 className="text-lg font-black text-white flex items-center gap-2 justify-end">الترند اليمني <TrendingUp size={18} className="text-[#e1b000]"/></h3>
@@ -141,26 +139,17 @@ const MonitoringPage: React.FC = () => {
                  {mockTrends.map((trend, i) => (
                    <div key={i} className="p-4 bg-slate-900/60 rounded-2xl border border-slate-800 hover:border-blue-500 transition-all cursor-pointer group">
                       <div className="flex justify-between items-center mb-1">
-                         {trend.type === 'up' ? <ArrowUpRight size={14} className="text-emerald-500"/> : <ArrowDownRight size={14} className="text-red-500"/>}
+                         {trend.type === 'up' ? <ArrowUpRight size={14} className="text-[#e1b000]"/> : <ArrowDownRight size={14} className="text-red-500"/>}
                          <p className="text-sm font-black text-white group-hover:text-blue-400">{trend.tag}</p>
                       </div>
                       <div className="flex justify-between items-center">
-                         <span className={`text-[10px] font-bold ${trend.type === 'up' ? 'text-emerald-500' : 'text-red-500'}`}>{trend.change}</span>
+                         <span className={`text-[10px] font-bold ${trend.type === 'up' ? 'text-[#e1b000]' : 'text-red-500'}`}>{trend.change}</span>
                          <span className="text-[10px] text-slate-500 font-bold">{trend.count} تفاعل</span>
                       </div>
                    </div>
                  ))}
               </div>
               <button className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-black rounded-xl transition-all uppercase">Open Social Analytics Dashboard</button>
-           </div>
-
-           <div className="glass-morphism p-8 rounded-[2.5rem] border border-slate-800 bg-blue-500/5">
-              <h4 className="text-xs font-black text-blue-500 uppercase mb-4 flex items-center gap-2 justify-end">News Sources <Globe size={14}/></h4>
-              <div className="flex flex-wrap justify-end gap-2">
-                 {['Saba', 'AdenNet', 'BBC Arabic', 'Reuters', 'Al-Masirah'].map(s => (
-                   <span key={s} className="px-3 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-slate-400 font-bold">{s}</span>
-                 ))}
-              </div>
            </div>
         </div>
       </div>

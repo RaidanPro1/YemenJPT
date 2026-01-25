@@ -7,122 +7,142 @@ import {
   MoreVertical, ChevronRight, Folder, FolderPlus, MessageCircle, FileUp, Info,
   Globe, Twitter, Facebook, ExternalLink, PenTool, Check, Loader2, Newspaper,
   Eye, History, AlertCircle, Sparkles, Layout, LayoutGrid, Rocket,
-  Zap, ShieldCheck as ShieldIcon, Flag, Circle, WifiOff, TrendingUp, ArrowUpRight
+  Zap, ShieldCheck as ShieldIcon
 } from 'lucide-react';
-import { Task, TaskPriority, SharedFile, User as UserType, Comment, Folder as FolderType } from '../types';
+import { Task, SharedFile, SortOption, UserRole, User as UserType, Comment, Folder as FolderType, PublicationRecord } from '../types';
 import { notificationService } from '../services/notifications';
 
-const NewsroomOS: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'workflow' | 'trends' | 'files'>('workflow');
-  const [offlineMode, setOfflineMode] = useState(false);
+const CollaborationPage: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'files' | 'newsroom' | 'tasks'>('files');
+  const [user, setUser] = useState<UserType | null>(null);
+  const [activeFolderId, setActiveFolderId] = useState('f1');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedFile, setSelectedFile] = useState<SharedFile | null>(null);
   
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 't1', title: 'تحقيق: فساد المشتقات النفطية', status: 'todo', priority: 'high', assignee: 'أحمد' },
-    { id: 't2', title: 'مراجعة فيديو انفجار عدن', status: 'in_progress', priority: 'medium', assignee: 'سارة' },
-    { id: 't3', title: 'أرشفة وثائق البنك المركزي', status: 'done', priority: 'low', assignee: 'زيد' },
+  const [wpSites] = useState([
+    { name: 'أخبار بيت الصحافة', url: 'news.ph-ye.org', status: 'online' },
+    { name: 'بوابة التقارير', url: 'reports.ph-ye.org', status: 'online' }
   ]);
 
-  const trends = [
-    { tag: '#اليمن_الآن', count: '12.4k', type: 'hot' },
-    { tag: '#صنعاء', count: '8.2k', type: 'up' },
-    { tag: '#عدن', count: '5.5k', type: 'stable' },
-  ];
+  const [files, setFiles] = useState<SharedFile[]>([]);
 
-  const handlePriorityChange = (taskId: string, priority: TaskPriority) => {
-    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, priority } : t));
-    notificationService.notify(`📝 تم تحديث أولوية المهمة إلى ${priority.toUpperCase()}`);
-  };
+  useEffect(() => {
+    const savedUser = localStorage.getItem('yemengpt_user');
+    if (savedUser) {
+      const u = JSON.parse(savedUser) as UserType;
+      setUser(u);
+      setFiles([
+        { 
+          id: '1', name: `تقرير_الفساد_المركزي.pdf`, type: 'PDF', size: '2.4 MB', owner: 'أحمد صالح', 
+          updatedAt: 'منذ ساعتين', comments: 1, timestamp: Date.now() - 7200000, 
+          organizationId: 'org1', folderId: 'f1',
+          commentsList: [{ id: 'c1', author: 'مدير التحرير', text: 'يرجى مراجعة المصادر في الصفحة 4', timestamp: Date.now() - 3600000 }],
+          publications: []
+        }
+      ]);
+    }
+  }, []);
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 pb-10 font-ar text-right" dir="rtl">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row-reverse justify-between items-center gap-6">
-        <div className="flex flex-row-reverse items-center gap-6">
-          <div className="w-16 h-16 bg-[#00338d]/20 rounded-2xl flex items-center justify-center border border-[#00338d]/20 shadow-inner">
-             <Newspaper size={32} className="text-[#e1b000]" />
+    <div className="space-y-6 flex flex-col h-full animate-in fade-in duration-500 pb-10 font-ar" dir="rtl">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="flex items-center gap-4 text-right">
+          <div className="w-14 h-14 bg-[#00338d]/20 rounded-2xl flex items-center justify-center border border-[#00338d]/20 shadow-inner">
+             <Layout size={28} className="text-[#e1b000]" />
           </div>
           <div>
-            <h1 className="text-3xl font-black text-white tracking-tight">📰 Newsroom OS</h1>
-            <p className="text-slate-400 text-sm font-medium">نظام إدارة التحرير المتكامل | Editor-in-Chief Dashboard</p>
+            <h1 className="text-2xl font-bold text-white tracking-tight">ديوان الأخبار المتقدم</h1>
+            <p className="text-slate-400 text-sm font-medium">إدارة المحتوى، الربط مع WordPress، وتوزيع الأدوات السيادية.</p>
           </div>
         </div>
-        <div className="flex items-center gap-4">
-           <button 
-             onClick={() => setOfflineMode(!offlineMode)}
-             className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all border ${offlineMode ? 'bg-amber-600/10 border-amber-500/30 text-amber-500 shadow-xl shadow-amber-900/20' : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-white'}`}
-           >
-              {offlineMode ? <WifiOff size={16} /> : <Zap size={16} />}
-              {offlineMode ? 'OFFLINE MODE ACTIVE' : 'SWITCH TO OFFLINE'}
-           </button>
-           <button className="bg-[#00338d] text-white px-8 py-2.5 rounded-xl text-xs font-black flex items-center gap-3 shadow-xl transition-all active:scale-95">
-             <Plus size={18}/> إنشاء خيط صحفي
-           </button>
+        <div className="flex bg-slate-900 p-1 rounded-2xl border border-slate-800">
+          <button onClick={() => setActiveTab('files')} className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'files' ? 'bg-[#00338d] text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>إدارة المستندات</button>
+          <button onClick={() => setActiveTab('newsroom')} className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'newsroom' ? 'bg-[#00338d] text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>غرفة الأخبار & WP</button>
+          <button onClick={() => setActiveTab('tasks')} className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'tasks' ? 'bg-[#00338d] text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>المهام</button>
         </div>
       </div>
 
-      <div className="flex bg-slate-900/50 p-1.5 rounded-[2rem] border border-slate-800 w-fit">
-        <button onClick={() => setActiveTab('workflow')} className={`px-8 py-3 rounded-2xl text-[11px] font-black flex items-center gap-3 transition-all ${activeTab === 'workflow' ? 'bg-[#00338d] text-white shadow-xl' : 'text-slate-500'}`}><Layout size={16}/> Kanban Workflow</button>
-        <button onClick={() => setActiveTab('trends')} className={`px-8 py-3 rounded-2xl text-[11px] font-black flex items-center gap-3 transition-all ${activeTab === 'trends' ? 'bg-[#00338d] text-white shadow-xl' : 'text-slate-500'}`}><TrendingUp size={16}/> Trend Watch</button>
-      </div>
-
-      {activeTab === 'workflow' && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-           {['todo', 'in_progress', 'done'].map((status) => (
-             <div key={status} className="space-y-6">
-                <div className="flex flex-row-reverse items-center justify-between px-6 py-4 bg-slate-900/50 rounded-[1.5rem] border border-slate-800">
-                  <span className="text-xs font-black uppercase tracking-widest text-slate-400">
-                    {status === 'todo' ? 'قائمة المهام (Leads)' : status === 'in_progress' ? 'قيد التحقق (Verification)' : 'مكتمل (Publishing)'}
-                  </span>
-                  <span className="bg-slate-800 text-[#e1b000] text-[10px] font-black px-3 py-1 rounded-full">
-                    {tasks.filter(t => t.status === status).length}
-                  </span>
+      <div className="flex-1 flex gap-6 overflow-hidden min-h-0">
+        {activeTab === 'newsroom' ? (
+          <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in slide-in-from-bottom overflow-y-auto p-2">
+             <div className="lg:col-span-2 space-y-8">
+                <div className="glass-morphism p-10 rounded-[3rem] border border-slate-800 space-y-8">
+                   <div className="flex flex-row-reverse justify-between items-center">
+                      <h3 className="text-2xl font-black text-white">توزيع المحتوى على ووردبريس</h3>
+                      <button className="px-6 py-3 bg-[#00338d] text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                        <Plus size={16}/> إنشاء مسودة موحدة
+                      </button>
+                   </div>
+                   <div className="space-y-4">
+                      {wpSites.map((site, i) => (
+                        <div key={i} className="p-6 bg-slate-950 border border-slate-800 rounded-[2rem] flex flex-row-reverse justify-between items-center group hover:border-[#00338d]/50 transition-all">
+                           <div className="flex flex-row-reverse items-center gap-6">
+                              <div className="p-4 bg-[#00338d]/10 rounded-2xl text-blue-400"><Globe size={24}/></div>
+                              <div className="text-right">
+                                 <h4 className="text-lg font-black text-white">{site.name}</h4>
+                                 <p className="text-[10px] text-slate-500 font-bold">{site.url}</p>
+                              </div>
+                           </div>
+                           <div className="flex items-center gap-4">
+                              <span className="text-[9px] font-black text-[#e1b000] uppercase flex items-center gap-2">
+                                <Zap size={14}/> متصل
+                              </span>
+                              <button className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-[10px] font-black">إدارة</button>
+                           </div>
+                        </div>
+                      ))}
+                   </div>
                 </div>
-                <div className="space-y-4">
-                  {tasks.filter(t => t.status === status).map((task) => (
-                    <div key={task.id} className="glass-morphism p-6 rounded-[2rem] border border-slate-800 hover:border-[#00338d]/40 transition-all group shadow-xl space-y-5">
-                       <h4 className="text-sm font-black text-white group-hover:text-[#e1b000] transition-colors">{task.title}</h4>
-                       <div className="flex flex-row-reverse items-center justify-between pt-4 border-t border-white/5">
-                          <div className="flex flex-row-reverse items-center gap-3">
-                             <div className="w-8 h-8 rounded-xl bg-blue-600/20 border border-blue-500/20 flex items-center justify-center text-[10px] font-black text-blue-400">{task.assignee?.charAt(0)}</div>
-                             <span className="text-[10px] text-slate-500 font-bold">{task.assignee}</span>
-                          </div>
-                          <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase flex items-center gap-2 ${task.priority === 'high' ? 'text-red-500 bg-red-500/10' : task.priority === 'medium' ? 'text-amber-500 bg-amber-500/10' : 'text-blue-500 bg-blue-500/10'}`}>
-                             <Flag size={10} fill="currentColor"/> {task.priority}
-                          </span>
-                       </div>
-                    </div>
-                  ))}
+
+                <div className="glass-morphism p-10 rounded-[3rem] border border-slate-800 space-y-8">
+                   <h3 className="text-2xl font-black text-white text-right">إدارة صفحات التواصل</h3>
+                   <div className="grid grid-cols-2 gap-6">
+                      <div className="p-8 bg-blue-600/5 border border-blue-600/20 rounded-[2.5rem] flex flex-col items-center gap-4 group cursor-pointer hover:bg-blue-600/10 transition-all">
+                         <Twitter size={32} className="text-blue-400 group-hover:scale-110 transition-transform" />
+                         <span className="text-xs font-black text-white uppercase">X / Twitter</span>
+                         <span className="text-[10px] text-[#e1b000] font-bold">مربوط بنجاح</span>
+                      </div>
+                      <div className="p-8 bg-blue-800/5 border border-blue-800/20 rounded-[2.5rem] flex flex-col items-center gap-4 group cursor-pointer hover:bg-blue-800/10 transition-all">
+                         <Facebook size={32} className="text-blue-600 group-hover:scale-110 transition-transform" />
+                         <span className="text-xs font-black text-white uppercase">Facebook</span>
+                         <span className="text-[10px] text-[#e1b000] font-bold">مربوط بنجاح</span>
+                      </div>
+                   </div>
                 </div>
              </div>
-           ))}
-        </div>
-      )}
 
-      {activeTab === 'trends' && (
-         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="glass-morphism p-10 rounded-[3rem] border border-slate-800 space-y-8">
-               <h3 className="text-xl font-black text-white flex flex-row-reverse items-center gap-3">رصد الوسوم النشطة (Snscrape) <TrendingUp size={24} className="text-[#e1b000]" /></h3>
-               <div className="space-y-4">
-                  {trends.map((trend, i) => (
-                     <div key={i} className="p-6 bg-slate-950/50 rounded-2xl border border-slate-800 hover:border-blue-500 transition-all flex flex-row-reverse justify-between items-center group">
-                        <div className="flex flex-row-reverse items-center gap-6">
-                           <div className="p-4 bg-[#00338d]/10 rounded-xl text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all"><Twitter size={20}/></div>
-                           <div className="text-right"><p className="text-lg font-black text-white">{trend.tag}</p><p className="text-[10px] text-slate-500 font-bold">{trend.count} تفاعلات مسجلة</p></div>
-                        </div>
-                        <ArrowUpRight size={20} className="text-slate-600 group-hover:text-blue-500" />
-                     </div>
-                  ))}
-               </div>
-            </div>
-            <div className="glass-morphism p-10 rounded-[3rem] border border-slate-800 bg-[#e1b000]/5 flex flex-col items-center justify-center text-center space-y-6">
-               <Sparkles size={64} className="text-[#e1b000] animate-pulse" />
-               <h3 className="text-2xl font-black text-white">AI Trend Predictor</h3>
-               <p className="text-slate-400 text-sm max-w-sm leading-relaxed">يتوقع معالج YemenJPT تصاعد السردية المتعلقة بـ "أسعار الصرف" بنسبة 25% خلال الـ 48 ساعة القادمة بناءً على أنماط النشر الحالية.</p>
-            </div>
-         </div>
-      )}
+             <div className="space-y-8">
+                <div className="glass-morphism p-8 rounded-[3rem] border border-slate-800 bg-[#e1b000]/5 space-y-6 shadow-2xl">
+                   <h4 className="text-xl font-black text-white text-right flex flex-row-reverse items-center gap-3">
+                      <Rocket size={20} className="text-[#e1b000]"/> النشر الذكي (AI Push)
+                   </h4>
+                   <p className="text-[10px] text-slate-500 leading-relaxed text-right font-medium">استخدم معالج YemenJPT لإعادة صياغة المستندات لتناسب مختلف المنصات (ووردبريس، تويتر، تليجرام) بضغطة واحدة.</p>
+                   <button className="w-full py-4 bg-[#00338d] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl flex items-center justify-center gap-2">
+                     <Sparkles size={16}/> صياغة ونشر ذكي
+                   </button>
+                </div>
+                
+                <div className="p-8 bg-slate-900 border border-slate-800 rounded-[2.5rem] space-y-4">
+                   <h5 className="text-xs font-black text-white text-right uppercase tracking-widest">تحليلات النشر اليومي</h5>
+                   <div className="space-y-4 pt-2">
+                      <div className="flex justify-between text-[10px] font-black text-slate-500 uppercase"><span>85%</span> <span>ووردبريس</span></div>
+                      <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-blue-600 w-[85%]"></div></div>
+                      <div className="flex justify-between text-[10px] font-black text-slate-500 uppercase"><span>15%</span> <span>تواصل اجتماعي</span></div>
+                      <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-[#e1b000] w-[15%]"></div></div>
+                   </div>
+                </div>
+             </div>
+          </div>
+        ) : (
+          <div className="flex-1 flex gap-6 overflow-hidden">
+             <div className="flex-1 glass-morphism rounded-[3rem] border border-slate-800 flex items-center justify-center">
+                <p className="text-slate-600 font-black uppercase tracking-widest text-xs">مستعرض الملفات السيادي جاهز</p>
+             </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
-export default NewsroomOS;
+export default CollaborationPage;
